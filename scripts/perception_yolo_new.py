@@ -11,8 +11,8 @@ from cv_bridge import CvBridge, CvBridgeError
 import rospy
 from sensor_msgs.msg import Image, CompressedImage
 from geometry_msgs.msg import PoseStamped
-from object_msgs.msg import ObjectPose
 from actionlib import SimpleActionServer
+from perception_pipeline.srv import find_object, find_objectResponse, find_objectRequest
 
 
 # yolo constants add in ROS params
@@ -47,7 +47,7 @@ class WorkpieceDetector :
         self.flag = 0
         self.return_value = False
         self.objectid = None
-        self.image_sub = rospy.Subscriber("/camera/color/image_raw2/compressed", CompressedImage, self.load_capture)
+        self.image_sub = rospy.Subscriber("/camera/color/image_raw2", Image, self.load_capture)
         # maybe return final image with bounding box and fps instead of imshow
         self.yolo_service = rospy.Service('yolo_service', find_object, self.find_object_cb)
         
@@ -63,9 +63,9 @@ class WorkpieceDetector :
     # load model and prepare its backend to either run on GPU or CPU, see if it can be added in constructor
     def build_model(self , is_cuda):
         # TODO: use from ros param or launch param
-        self.net = cv2.dnn.readNet("src/automate-robot-bvp/ebot_perception/scripts/utils/auto_final.onnx")
+        self.net = cv2.dnn.readNet("src/perception_pipeline/scripts/utils/auto_final.onnx")
         if is_cuda:
-            print("Attempty to use CUDA")
+            print("Attempt to use CUDA")
             self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
             self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA_FP16)
         else:
@@ -81,15 +81,12 @@ class WorkpieceDetector :
         return preds
 
     def load_capture(self, data):
-        np_arr = np.fromstring(data.data, np.uint8)
-        image_np = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
-        self.frame = image_np
-        self.capture = self.frame        
+        self.frame = self.bridge.imgmsg_to_cv2(data)
 
     # load classes.txt that contains mapping of model with labels
     def load_classes(self):
         self.class_list = []
-        with open("src/automate-robot-bvp/ebot_perception/scripts/utils/classes.txt", "r") as f:
+        with open("src/perception_pipeline/scripts/utils/classes.txt", "r") as f:
             self.class_list = [cname.strip() for cname in f.readlines()]
         return self.class_list
 
@@ -168,7 +165,7 @@ class WorkpieceDetector :
             # wait or possibly return?
         else:
             # load model
-            self.build_model(is_cuda)
+            self.build_model(False)
             
             # load classes (object labels)
             self.load_classes()
@@ -218,6 +215,10 @@ class WorkpieceDetector :
                 self.fps_label = "FPS: %.2f" % self.fps
                 cv2.putText(self.frame, fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)           
 
+            cv2.imshow("yolo_output", self.frame)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            
             return self.return_value
 
 
