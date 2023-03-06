@@ -93,6 +93,7 @@ class WorkpieceDetector :
         return self.class_list
 
     # extract bounding box, class IDs and confidences of detected objects
+    # YOLOv5 returns a 3D tensor of dimension 25200*(5 + n_classes)
     def wrap_detection(self,input_image, output_data):
         class_ids = []
         confidences = []
@@ -105,14 +106,25 @@ class WorkpieceDetector :
         x_factor = image_width / INPUT_WIDTH
         y_factor =  image_height / INPUT_HEIGHT
 
+        # Iterate through all the 25200 vectors
         for r in range(rows):
             row = output_data[r]
+
+            # Continue only if Pc > conf_threshold
             confidence = row[4]
             if confidence >= CONFIDENCE_THRESHOLD:
-
+                
+                # One-hot encoded vector representing class of object
                 classes_scores = row[5:]
+
+                # Returns min and max values in a array alongwith their indices
                 _, _, _, max_indx = cv2.minMaxLoc(classes_scores)
+
+                # Extract the column index of the maximum values in classes_scores
                 class_id = max_indx[1]
+
+                # Continue of the class score is greater than a threshold
+                # class_score represents the probability of an object belonging to that class
                 if (classes_scores[class_id] > .25):
 
                     confidences.append(confidence)
