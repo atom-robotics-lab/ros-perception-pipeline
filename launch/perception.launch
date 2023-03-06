@@ -1,12 +1,8 @@
-<launch>
+<launch>	
+	<!--load config file for perception_pipeline parameters-->
+	<rosparam command="load" file="$(find perception_pipeline)/config/config.yaml" />
 
-	<!-- launch find_object_3d launch file -->
-	<include file="$(find ebot_perception)/launch/find_object_3d.launch" />
-	
-	<!-- run pick_and_place node -->
-	<node name="pick_and_place" pkg="ebot_perception" type="arm_manipulation.py" output="screen" />
-
-	<!-- run perception_pipeline node -->
-	<node name="perception_pipeline" pkg="ebot_perception" type="perception_pipeline.py" output="screen"/>
+	<!-- run perception_yolo node node -->
+	<node name="perception_yolo" pkg="perception_pipeline" type="perception_yolo_new.py" output="screen" />
 
 </launch>

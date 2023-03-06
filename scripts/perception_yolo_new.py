@@ -47,6 +47,8 @@ class WorkpieceDetector :
         self.flag = 0
         self.return_value = False
         self.objectid = None
+        self.model_dir_path = rospy.get_param("model_params/model_dir_path")
+        print(rospy.get_param("model_params/model_name"))
         self.image_sub = rospy.Subscriber("/camera/color/image_raw2", Image, self.load_capture)
         # maybe return final image with bounding box and fps instead of imshow
         self.yolo_service = rospy.Service('yolo_service', find_object, self.find_object_cb)
