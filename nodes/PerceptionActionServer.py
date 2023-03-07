@@ -31,7 +31,7 @@ colors = [(255, 255, 0), (0, 255, 0), (0, 255, 255), (255, 0, 0)]
 # is_cuda = len(sys.argv) > 1 and sys.argv[1] == "cuda"
 
 
-class YOLOPerception:
+class PerceptionActionServer:
 
     def __init__(self):
         # calculate fps, TODO: create a boolean to enable/diable show_fps
@@ -241,6 +241,3 @@ if __name__ == "__main__" :
 
     wd = YOLOPerception()
     rospy.spin()
-    
-    
-
