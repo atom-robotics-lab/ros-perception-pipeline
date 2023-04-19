@@ -24,12 +24,15 @@ class mobile_net:
         module_handle="https://tfhub.dev/tensorflow/efficientdet/d0/1"    
         # Loading model directly from TensorFlow Hub
         self.detector = hub.load(module_handle)
-        # Loading csv with labels of classes
-        self.labels = pd.read_csv('labels.csv', sep=';', index_col='ID')
-        self.labels = self.labels['OBJECT (2017 REL.)']
-        # Resizing image
+         # Resizing image
         self.img_height=800
         self.img_width=800
+
+    def load_classes(self):
+        self.labels = []
+        with open("utils/coco_classes.txt", "r") as f:
+            self.labels = [cname.strip() for cname in f.readlines()]
+        return self.labels
 
     def display_image(self,image):
         cv2.imshow("result", image)
