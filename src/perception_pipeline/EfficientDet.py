@@ -30,7 +30,7 @@ class mobile_net:
 
     def load_classes(self):
         self.labels = []
-        with open("utils/coco_classes.txt", "r") as f:
+        with open("scripts/utils/coco_classes.txt", "r") as f:
             self.labels = [cname.strip() for cname in f.readlines()]
         return self.labels
 

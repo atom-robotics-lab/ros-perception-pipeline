@@ -9,7 +9,7 @@ class Yolov8:
 
   def load_classes(self):
     self.class_list = []
-    with open("src/perception_pipeline/scripts/utils/classes_v8.txt", "r") as f:
+    with open("scripts/utils/classes_v8.txt", "r") as f:
         self.class_list = [cname.strip() for cname in f.readlines()]
     return self.class_list
 
