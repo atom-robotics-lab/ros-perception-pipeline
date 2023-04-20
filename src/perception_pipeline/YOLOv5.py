@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 
 
-class YOLOPerception:
+class YOLOv5:
 
     def __init__(self, model_dir_path, 
                         conf_threshold,
