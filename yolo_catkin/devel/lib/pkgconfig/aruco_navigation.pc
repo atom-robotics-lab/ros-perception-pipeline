@@ -1,8 +1,0 @@
-prefix=/home/sanchay/yolo_catkin/devel
-
-Name: aruco_navigation
-Description: Description of aruco_navigation
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

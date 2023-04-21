@@ -1,8 +1,0 @@
-prefix=/home/sanchay/yolo_catkin/devel
-
-Name: yolov8_test
-Description: Description of yolov8_test
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
