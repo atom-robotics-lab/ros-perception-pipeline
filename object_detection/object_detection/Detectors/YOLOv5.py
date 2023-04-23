@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import time
 import os
 
@@ -9,11 +7,7 @@ import numpy as np
 
 class YOLOv5:
 
-    def __init__(self, model_dir_path, 
-                        conf_threshold,
-                        score_threshold,
-                        nms_threshold,
-                        is_cuda):
+    def __init__(self, model_dir_path, conf_threshold, score_threshold, nms_threshold, is_cuda):
 
         # calculate fps, TODO: create a boolean to enable/diable show_fps
         self.frame_count = 0
@@ -26,14 +20,18 @@ class YOLOv5:
         self.net = None
         self.predictions = []
         self.model_dir_path = model_dir_path
-        self.model_name = model_name
+        self.model_name = "auto_final.onnx"
         self.INPUT_WIDTH = 640
         self.INPUT_HEIGHT = 640
+        self.CONFIDENCE_THRESHOLD = conf_threshold
+
         self.bb_colors = [(255, 255, 0), (0, 255, 0), (0, 255, 255), (255, 0, 0)]
+        self.is_cuda = is_cuda
+        
 
         
         # load & build the given model
-        self.build_model(is_cuda)
+        self.build_model(self.is_cuda)
         
         # load classes (object labels)
         self.load_classes()
@@ -58,7 +56,7 @@ class YOLOv5:
 
     def detect(self, image):
         # convert image to 640x640 
-        blob = cv2.dnn.blobFromImage(image, 1/255.0, (self.INPUT_WIDTH, INPUT_HEIGHT), swapRB=True, crop=False)
+        blob = cv2.dnn.blobFromImage(image, 1/255.0, (self.INPUT_WIDTH, self.INPUT_HEIGHT), swapRB=True, crop=False)
         self.net.setInput(blob)
         preds = self.net.forward()
         return preds
@@ -83,7 +81,7 @@ class YOLOv5:
         image_width, image_height, _ = input_image.shape
 
         x_factor = image_width / self.INPUT_WIDTH
-        y_factor =  image_height / INPUT_HEIGHT
+        y_factor =  image_height / self.INPUT_HEIGHT
 
         # Iterate through all the 25200 vectors
         for r in range(rows):
@@ -91,7 +89,7 @@ class YOLOv5:
 
             # Continue only if Pc > conf_threshold
             confidence = row[4]
-            if confidence >= CONFIDENCE_THRESHOLD:
+            if confidence >= self.CONFIDENCE_THRESHOLD:
                 
                 # One-hot encoded vector representing class of object
                 classes_scores = row[5:]
