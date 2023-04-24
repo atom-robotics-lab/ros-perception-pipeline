@@ -20,13 +20,15 @@ from PIL import ImageOps
 import time 
 
 class mobile_net:
-    def __init__(self):
-        module_handle="https://tfhub.dev/tensorflow/efficientdet/d0/1"    
+    def __init__(self, model_dir_path,model_name, conf_threshold, score_threshold, nms_threshold):
+        module_handle="https://tfhub.dev/tensorflow/efficientdet/d0/1"
         # Loading model directly from TensorFlow Hub
         self.detector = hub.load(module_handle)
+        self.conf=conf_threshold
          # Resizing image
         self.img_height=800
         self.img_width=800
+        self.predictions=[]
 
     def load_classes(self):
         self.labels = []
@@ -49,7 +51,6 @@ class mobile_net:
                     (left, top)],
                     width=thickness,
                     fill=color)
-
         # If the total height of the display strings added to the top of the bounding
         # box exceeds the top of the image, stack the strings below the bounding box
         # instead of above.
@@ -74,8 +75,17 @@ class mobile_net:
                     font=font)
             text_bottom -= text_height - 2 * margin
 
+    # create list of dictionary containing predictions
+    def create_predictions_list(self, class_ids, confidences, boxes):
+        for i in range(len(class_ids)):
+            obj_dict = {
+                "class_id": class_ids[i],
+                "confidence": confidences[i],
+                "box": boxes[i]
+            }
+            self.predictions.append(obj_dict)
 
-    def draw_boxes(self,image,boxes,class_names,scores,max_boxes=10,min_score=0.35):
+    def draw_boxes(self,image,boxes,class_ids,confidences,max_boxes=10):
         """Overlay labeled boxes on an image with formatted scores and label names."""
         colors = list(ImageColor.colormap.values())
 
@@ -87,21 +97,13 @@ class mobile_net:
             font = ImageFont.load_default()
 
         for i in range(min(boxes.shape[0], max_boxes)):
-            if scores[i] >= min_score:
+            if confidences[i] >= self.conf:
                 ymin, xmin, ymax, xmax = tuple(boxes[i])
-                display_str = "{}: {}%".format(self.labels[class_names[i]],
-                                                int(100 * scores[i]))
-                color = colors[hash(class_names[i]) % len(colors)]
+                display_str = "{}: {}%".format(self.labels[class_ids[i]],
+                                                int(100 * confidences[i]))
+                color = colors[hash(class_ids[i]) % len(colors)]
                 image_pil = Image.fromarray(np.uint8(image)).convert("RGB")
-                self.draw_bounding_box_on_image(
-                    image_pil,
-                    ymin,
-                    xmin,
-                    ymax,
-                    xmax,
-                    color,
-                    font,
-                    display_str_list=[display_str])
+                self.draw_bounding_box_on_image(image_pil,ymin,xmin,ymax,xmax,color,font,display_str_list=[display_str])
                 np.copyto(image, np.array(image_pil))
         return image
 
@@ -110,26 +112,22 @@ class mobile_net:
         img = tf.image.decode_jpeg(img, channels=3)
         return img
 
-    def run_detector(self,detector, path):
-        img = cv2.imread(path)
-        inp = cv2.resize(img, (self.img_height,self.img_width))
+    def get_prediction(self,cv_image):
         #Convert img to RGB
-        rgb = cv2.cvtColor(inp, cv2.COLOR_BGR2RGB)
+        rgb = cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB)
         # COnverting to uint8
         rgb_tensor = tf.convert_to_tensor(rgb, dtype=tf.uint8)
         #Add dims to rgb_tensor
         rgb_tensor = tf.expand_dims(rgb_tensor , 0)
         start_time = time.time()
-        result = detector(rgb_tensor)
+        result = self.detector(rgb_tensor)
         end_time = time.time()
         result = {key:value.numpy() for key,value in result.items()}
         print("Found %d objects." % len(result["detection_scores"]))
         print("Inference time: ", end_time-start_time)
-        image_with_boxes = self.draw_boxes(
-            inp, result["detection_boxes"][0],
-            result["detection_classes"][0], result["detection_scores"][0])
-
-        self.display_image(image_with_boxes)
+        self.create_predictions_list(cv_image,result["detection_boxes"][0],result["detection_classes"][0], result["detection_scores"][0])
+        image_with_boxes = self.draw_boxes(cv_image,result["detection_boxes"][0],result["detection_classes"][0], result["detection_scores"][0])
+        self.display_image(self.predictions,image_with_boxes)
 
 
     def detect_img(self,image_url):
