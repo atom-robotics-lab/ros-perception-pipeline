@@ -19,7 +19,7 @@ from PIL import ImageOps
 # For measuring the inference time.
 import time 
 
-class mobile_net:
+class EfficientDet:
     def __init__(self, model_dir_path,model_name, conf_threshold, score_threshold, nms_threshold):
         module_handle="https://tfhub.dev/tensorflow/efficientdet/d0/1"
         # Loading model directly from TensorFlow Hub
@@ -138,5 +138,5 @@ class mobile_net:
 
 if __name__=='__main__':
   # Load model 
-    det=mobile_net()
+    det = EfficientDet()
     det.detect_img("/home/sanchay/yolo_catkin/src/yolov8_test/scripts/dog_cat.jpg")

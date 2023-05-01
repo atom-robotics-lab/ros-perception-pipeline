@@ -1,6 +1,6 @@
-object_detection:
+ObjectDetection:
   ros__parameters:
     output_img_topic: object_detection/img_bb
     model_params:
-      detector: YOLOv5
+      detector_type: YOLOv5
       model_dir_path: /home/singh/ros_workspaces

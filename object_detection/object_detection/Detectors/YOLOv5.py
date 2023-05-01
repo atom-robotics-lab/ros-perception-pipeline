@@ -7,7 +7,7 @@ import numpy as np
 
 class YOLOv5:
 
-    def __init__(self, model_dir_path, conf_threshold, score_threshold, nms_threshold, is_cuda):
+    def __init__(self, model_dir_path, conf_threshold = 0.7, score_threshold = 0.4, nms_threshold = 0.25, is_cuda = 0):
 
         # calculate fps, TODO: create a boolean to enable/diable show_fps
         self.frame_count = 0
