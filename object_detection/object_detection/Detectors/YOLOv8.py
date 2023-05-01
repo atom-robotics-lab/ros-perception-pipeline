@@ -1,10 +1,11 @@
 import cv2
 from ultralytics import YOLO
+import os
 
 class YOLOv8:
-  def __init__(self, model_dir_path,model_name, conf_threshold, score_threshold, nms_threshold):
+  def __init__(self, model_dir_path, weight_file_name, conf_threshold = 0.7, score_threshold = 0.4, nms_threshold = 0.25):
     # Load model 
-    self.model=YOLO(model_dir_path+model_name)
+    self.model=YOLO(os.path.join(model_dir_path, weight_file_name))
     self.conf_threshold=conf_threshold
     self.predictions=[]
   
