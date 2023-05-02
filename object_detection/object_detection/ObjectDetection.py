@@ -20,9 +20,9 @@ class ObjectDetection(Node):
             namespace='',
             parameters=[
                 ('output_img_topic', 'object_detection/img_bb'),
-                ('model_params.detector_type', 'YOLOv5'),
-                ('model_params.model_dir_path', 'model'),
-                ('model_params.weight_file_name', "auto_final.onnx")
+                ('model_params.detector_type', 'YOLOv8'),
+                ('model_params.model_dir_path', 'model/yolov8'),
+                ('model_params.weight_file_name', "version5.pt")
             ]
         )
 
@@ -34,12 +34,16 @@ class ObjectDetection(Node):
 
         if self.detector_type == "YOLOv5" :
             self.detector = YOLOv5.YOLOv5(self.model_dir_path, self.weight_file_name)
+
         elif self.detector_type == "YOLOv8" :
-            self.detector = YOLOv8.YOLOv8()
+            self.detector = YOLOv8.YOLOv8(self.model_dir_path, self.weight_file_name)
+
         elif self.detector_type == "RetinaNet" :
             self.detector = RetinaNet.RetinaNet()
+
         elif self.detector_type == "EfficientDet" :
             self.detector = EfficientDet.EfficientDet()
+
         else :
             print("The detector type : {} is not supported".format(self.detector_type))
 
@@ -61,10 +65,10 @@ def main():
     od = ObjectDetection()
 
 
-    try :
-        rclpy.spin(od)
-    except Exception as e:
-        print(e)
+    #try :
+    rclpy.spin(od)
+    #except Exception as e:
+    #print(e)
 
 
 if __name__=="__main__" :
