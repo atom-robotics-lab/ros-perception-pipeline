@@ -20,8 +20,8 @@ class ObjectDetection(Node):
             namespace='',
             parameters=[
                 ('output_img_topic', 'object_detection/img_bb'),
-                ('model_params.detector_type', 'RetinaNet'),
-                ('model_params.model_dir_path', 'model/retinanet'),
+                ('model_params.detector_type', 'EfficientDet'),
+                ('model_params.model_dir_path', 'model/efficientdet'),
                 ('model_params.weight_file_name', "resnet.h5")
             ]
         )
@@ -42,7 +42,7 @@ class ObjectDetection(Node):
             self.detector = RetinaNet.RetinaNet(self.model_dir_path, self.weight_file_name)
 
         elif self.detector_type == "EfficientDet" :
-            self.detector = EfficientDet.EfficientDet()
+            self.detector = EfficientDet.EfficientDet(self.model_dir_path, self.weight_file_name)
 
         else :
             print("The detector type : {} is not supported".format(self.detector_type))

@@ -15,9 +15,10 @@ import matplotlib.pyplot as plt
 
 
 class RetinaNet:
-    def __init__(self, model_dir_path, weight_file_name):
+    def __init__(self, model_dir_path, weight_file_name, conf_threshold = 0.7, score_threshold = 0.4, nms_threshold = 0.25):
 
         self.predictions = []
+        self.conf_threshold = conf_threshold
 
         self.model_dir_path = model_dir_path
         self.weight_file_name = weight_file_name
@@ -73,7 +74,7 @@ class RetinaNet:
         # visualize detections
         for box, score, label in zip(boxes[0], scores[0], labels[0]):
             # scores are sorted so we can break
-            if score < 0.5:
+            if score < self.conf_threshold:
                 break
                 
             color = label_color(label)

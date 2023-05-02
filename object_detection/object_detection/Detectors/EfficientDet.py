@@ -20,19 +20,29 @@ from PIL import ImageOps
 import time 
 
 class EfficientDet:
-    def __init__(self, model_dir_path,model_name, conf_threshold, score_threshold, nms_threshold):
-        module_handle="https://tfhub.dev/tensorflow/efficientdet/d0/1"
-        # Loading model directly from TensorFlow Hub
-        self.detector = hub.load(module_handle)
+    def __init__(self, model_dir_path, weight_file_name, conf_threshold = 0.7, score_threshold = 0.25, nms_threshold = 0.4):
+        
+        self.model_dir_path = model_dir_path
+        self.weight_file_name = weight_file_name
+
         self.conf=conf_threshold
          # Resizing image
         self.img_height=800
         self.img_width=800
         self.predictions=[]
 
+        self.build_model()
+        self.load_classes()
+
+    def build_model(self) :
+        module_handle="https://tfhub.dev/tensorflow/efficientdet/d0/1"
+        # Loading model directly from TensorFlow Hub
+        self.detector = hub.load(module_handle)
+
+
     def load_classes(self):
         self.labels = []
-        with open("scripts/utils/coco_classes.txt", "r") as f:
+        with open(self.model_dir_path + "/classes.txt", "r") as f:
             self.labels = [cname.strip() for cname in f.readlines()]
         return self.labels
 
@@ -112,25 +122,33 @@ class EfficientDet:
         img = tf.image.decode_jpeg(img, channels=3)
         return img
 
-    def get_prediction(self,cv_image):
+    def get_predictions(self,cv_image):
 
         #Convert img to RGB
-        rgb = cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB)
+        frame = cv_image.copy()
+
+        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         # COnverting to uint8
         rgb_tensor = tf.convert_to_tensor(rgb, dtype=tf.uint8)
 
         #Add dims to rgb_tensor
         rgb_tensor = tf.expand_dims(rgb_tensor , 0)
+
         start_time = time.time()
         result = self.detector(rgb_tensor)
         end_time = time.time()
+
         result = {key:value.numpy() for key,value in result.items()}
+        
         print("Found %d objects." % len(result["detection_scores"]))
         print("Inference time: ", end_time-start_time)
-        self.create_predictions_list(cv_image,result["detection_boxes"][0],result["detection_classes"][0], result["detection_scores"][0])
-        image_with_boxes = self.draw_boxes(cv_image,result["detection_boxes"][0],result["detection_classes"][0], result["detection_scores"][0])
-        self.display_image(self.predictions,image_with_boxes)
+        
+        self.create_predictions_list(result["detection_boxes"][0],result["detection_classes"][0], result["detection_scores"][0])
+        #image_with_boxes = self.draw_boxes(cv_image,result["detection_boxes"][0],result["detection_classes"][0], result["detection_scores"][0])
+        
+        
+        return [self.predictions, frame]
 
 
     def detect_img(self,image_url):
