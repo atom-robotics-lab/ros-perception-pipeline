@@ -20,9 +20,9 @@ class ObjectDetection(Node):
             namespace='',
             parameters=[
                 ('output_img_topic', 'object_detection/img_bb'),
-                ('model_params.detector_type', 'YOLOv8'),
-                ('model_params.model_dir_path', 'model/yolov8'),
-                ('model_params.weight_file_name', "version5.pt")
+                ('model_params.detector_type', 'RetinaNet'),
+                ('model_params.model_dir_path', 'model/retinanet'),
+                ('model_params.weight_file_name', "resnet.h5")
             ]
         )
 
@@ -39,7 +39,7 @@ class ObjectDetection(Node):
             self.detector = YOLOv8.YOLOv8(self.model_dir_path, self.weight_file_name)
 
         elif self.detector_type == "RetinaNet" :
-            self.detector = RetinaNet.RetinaNet()
+            self.detector = RetinaNet.RetinaNet(self.model_dir_path, self.weight_file_name)
 
         elif self.detector_type == "EfficientDet" :
             self.detector = EfficientDet.EfficientDet()

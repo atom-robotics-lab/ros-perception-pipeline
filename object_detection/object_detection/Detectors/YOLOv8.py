@@ -8,9 +8,21 @@ class YOLOv8:
     self.model_dir_path = model_dir_path
     self.weight_file_name = weight_file_name
 
-    self.model = YOLO(os.path.join(self.model_dir_path, self.weight_file_name))
+    
     self.conf_threshold = conf_threshold
     self.predictions = []
+    self.build_model()
+    self.load_classes()
+
+
+  def build_model(self) :
+
+    try :
+      model_path = os.path.join(self.model_dir_path, self.weight_file_name)
+      self.model = YOLO(model_path)
+    
+    except :
+      raise Exception("Error loading given model from path: {}. Maybe the file doesn't exist?".format(model_path))
   
   def load_classes(self):
 

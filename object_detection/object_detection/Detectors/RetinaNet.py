@@ -15,46 +15,60 @@ import matplotlib.pyplot as plt
 
 
 class RetinaNet:
-    def __init__(self):
-        # self.image = 0
-        self.path = os.path.dirname(__file__)[:-7]
-        self.model_path = os.path.join('..', 'snapshots', f"{self.path}scripts/utils/resnet50_coco_best_v2.1.0.h5")
-        self.model = models.load_model(self.model_path, backbone_name='resnet50')
-        self.labels_to_names = self.load_classes()
-        self.bridge = CvBridge()
-        self.image_sub = rospy.Subscriber("/camera/color/image_raw2", Image, self.load_capture)    
+    def __init__(self, model_dir_path, weight_file_name):
+
+        self.predictions = []
+
+        self.model_dir_path = model_dir_path
+        self.weight_file_name = weight_file_name
         
+        self.labels_to_names = self.load_classes()
+        self.build_model()  
+
+    def build_model(self) :
+
+        try :
+            self.model_path = os.path.join(self.model_dir_path, self.weight_file_name)
+            self.model = models.load_model(self.model_path, backbone_name='resnet50')
+
+        except :
+            raise Exception("Error loading given model from path: {}. Maybe the file doesn't exist?".format(self.model_path))
 
 
     def load_classes(self):
         self.class_list = []
-        with open(f"{self.path}scripts/utils/coco_classes.txt", "r") as f:
+        with open(self.model_dir_path + "/classes.txt", "r") as f:
             self.class_list = [cname.strip() for cname in f.readlines()]
         return self.class_list
+    
+    def create_predictions_list(self, class_ids, confidences, boxes):
+        for i in range(len(class_ids)):
+            obj_dict = {
+                "class_id": class_ids[i],
+                "confidence": confidences[i],
+                "box": boxes[i]
+            }
 
-    def load_capture(self, data):
-        self.frame = self.bridge.imgmsg_to_cv2(data)
-        try:
-            self.image = (self.frame)
-            self.object_detection()                    
-        except:
-            pass
+            self.predictions.append(obj_dict)
         
-    def object_detection(self):        
+
+    def get_predictions(self, cv_image):      
 
         # copy to draw on
-        draw = self.image.copy()
+        self.frame = cv_image.copy()
         # preprocess image for network
-        image = preprocess_image(self.image)
-        image, scale = resize_image(image)
+        input = preprocess_image(cv_image)
+        input, scale = resize_image(input)
 
         # process image
         start = time.time()
-        boxes, scores, labels = self.model.predict_on_batch(np.expand_dims(image, axis=0))
+        boxes, scores, labels = self.model.predict_on_batch(np.expand_dims(input, axis=0))
         print("processing time: ", time.time() - start)
 
         # correct for image scale
         boxes /= scale
+
+        self.create_predictions_list(labels, scores, boxes)
 
         # visualize detections
         for box, score, label in zip(boxes[0], scores[0], labels[0]):
@@ -65,20 +79,19 @@ class RetinaNet:
             color = label_color(label)
             
             b = box.astype(int)
-            draw_box(draw, b, color=color)
+            draw_box(self.frame, b, color=color)
             
             caption = "{} {:.3f}".format(self.labels_to_names[label], score)
             print(self.labels_to_names[label])
-            draw_caption(draw, b, caption)
-        
-        while True:
-            cv2.imshow("ok", draw)
-            cv2.waitKey(0)       
+            draw_caption(self.frame, b, caption)
+
+        return (self.predictions,self.frame)
+              
         
         
 
 if __name__ == '__main__' :
-    rospy.init_node("preception_retinanet")
+    
 
     ok = RetinaNet()
-    rospy.spin()    
+        

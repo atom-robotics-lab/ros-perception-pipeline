@@ -119,7 +119,7 @@ class EfficientDet:
 
         # COnverting to uint8
         rgb_tensor = tf.convert_to_tensor(rgb, dtype=tf.uint8)
-        
+
         #Add dims to rgb_tensor
         rgb_tensor = tf.expand_dims(rgb_tensor , 0)
         start_time = time.time()
@@ -135,7 +135,22 @@ class EfficientDet:
 
     def detect_img(self,image_url):
         start_time = time.time()
-        self.run_detector(self.detector, image_url)
+        self.run_detector(self.detector, image_url)#Convert img to RGB
+        rgb = cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB)
+        # COnverting to uint8
+        rgb_tensor = tf.convert_to_tensor(rgb, dtype=tf.uint8)
+        #Add dims to rgb_tensor
+        rgb_tensor = tf.expand_dims(rgb_tensor , 0)
+        start_time = time.time()
+        result = self.detector(rgb_tensor)
+        end_time = time.time()
+        result = {key:value.numpy() for key,value in result.items()}
+        print("Found %d objects." % len(result["detection_scores"]))
+        print("Inference time: ", end_time-start_time)
+        self.create_predictions_list(cv_image,result["detection_boxes"][0],result["detection_classes"][0], result["detection_scores"][0])
+        image_with_boxes = self.draw_boxes(cv_image,result["detection_boxes"][0],result["detection_classes"][0], result["detection_scores"][0])
+        self.display_image(self.predictions,image_with_boxes)
+
         end_time = time.time()
         print("Inference time:",end_time-start_time)
 
