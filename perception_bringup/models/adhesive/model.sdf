@@ -1,0 +1,39 @@
+<?xml version ="1.0"?>
+<sdf version="1.6">
+  <model name="adhesive">
+   
+    <link name="link">
+
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.08</mass>
+      </inertial>
+
+      <collision name="colision1">
+        <pose>0 0 0 0 0 0 </pose>
+        <geometry>
+          <mesh>
+            <uri>model://adhesive/meshes/adhesive.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="visual1">
+        <cast_shadows>true</cast_shadows>
+	      <pose> 0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://adhesive/meshes/adhesive.dae</uri>
+          </mesh>
+        </geometry>
+	      <material>
+          <ambient>0 0.5 0.5 1</ambient>
+          <diffuse>0 0 0 1</diffuse>
+          <specular>0 0 0 1</specular>
+          <emissive>0 0 0 1</emissive>
+	      </material>
+      </visual>
+
+    </link>
+  </model>
+</sdf>
