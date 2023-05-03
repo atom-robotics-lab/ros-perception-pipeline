@@ -21,6 +21,7 @@ from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -29,6 +30,7 @@ def generate_launch_description():
   pkg_ros_gz_sim = get_package_share_directory("ros_gz_sim")
 
   world_name = "playground"
+
   for arg in sys.argv:
       if arg.startswith("world:="):
         world_name = arg.split(":=")[1]
@@ -40,12 +42,19 @@ def generate_launch_description():
 		    os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
 	)
 
+  parameter_bridge = Node(package="ros_gz_bridge", executable="parameter_bridge", 
+                          parameters = [
+                             {'config_file'  : os.path.join(pkg_perception_bringup, "config", "bridge.yaml")}
+                          ]
+                      )
+
   arg_gz_sim = DeclareLaunchArgument('gz_args', default_value=world_sdf)
 
   arg_world_name = DeclareLaunchArgument('world', default_value='playground_world' )
 
   launch = [
-    gz_sim
+    gz_sim,
+    parameter_bridge
   ]
 
   args = [

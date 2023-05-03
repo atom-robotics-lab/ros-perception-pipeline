@@ -24,9 +24,9 @@ class EfficientDet:
         
         self.model_dir_path = model_dir_path
         self.weight_file_name = weight_file_name
-
         self.conf=conf_threshold
-         # Resizing image
+        
+        # Resizing image
         self.img_height=800
         self.img_width=800
         self.predictions=[]
