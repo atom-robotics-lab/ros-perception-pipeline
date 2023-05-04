@@ -19,13 +19,15 @@ class ObjectDetection(Node):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('output_img_topic', 'object_detection/img_bb'),
-                ('model_params.detector_type', 'EfficientDet'),
-                ('model_params.model_dir_path', 'model/efficientdet'),
-                ('model_params.weight_file_name', "resnet.h5")
+                ('output_bb_topic', 'object_detection/img_bb'),
+                ('output_img_topic', 'object_detection/img'),
+                ('model_params.detector_type', 'YOLOv5'),
+                ('model_params.model_dir_path', 'model/yolov5'),
+                ('model_params.weight_file_name', "auto_final.onnx")
             ]
         )
 
+        self.output_bb_topic = self.get_parameter('output_bb_topic').value
         self.output_img_topic = self.get_parameter('output_img_topic').value
         self.detector_type = self.get_parameter('model_params.detector_type').value
         self.model_dir_path = self.get_parameter('model_params.model_dir_path').value
@@ -48,27 +50,32 @@ class ObjectDetection(Node):
             print("The detector type : {} is not supported".format(self.detector_type))
 
         self.img_pub = self.create_publisher(Image, self.output_img_topic, 10)
-        self.img_sub = self.create_subscription(Image, 'img_raw', self.detection_cb, 10)
+        self.bb_pub = None
+
+        self.img_sub = self.create_subscription(Image, 'color_camera/image_raw', self.detection_cb, 10)
 
         self.bridge = CvBridge()
 
     def detection_cb(self, img_msg):
         input = self.bridge.imgmsg_to_cv2(img_msg, "bgr8")
 
-        predictions = self.detector.get_predictions(cv_image = input)
+        predictions, frame = self.detector.get_predictions(cv_image = input)
 
+        output = self.bridge.cv2_to_imgmsg(frame, "bgr8")
+
+        self.img_pub.publish(output)
+        
         print(predictions)
 
 
 def main():
     rclpy.init()
     od = ObjectDetection()
+    try :
+        rclpy.spin(od)
 
-
-    #try :
-    rclpy.spin(od)
-    #except Exception as e:
-    #print(e)
+    except Exception as e:
+        print(e)
 
 
 if __name__=="__main__" :

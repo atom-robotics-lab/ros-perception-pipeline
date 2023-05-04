@@ -22,6 +22,11 @@ import time
 class EfficientDet:
     def __init__(self, model_dir_path, weight_file_name, conf_threshold = 0.7, score_threshold = 0.25, nms_threshold = 0.4):
         
+        self.frame_count = 0
+        self.total_frames = 0
+        self.fps = -1
+        self.start = time.time_ns()
+        
         self.model_dir_path = model_dir_path
         self.weight_file_name = weight_file_name
         self.conf=conf_threshold
@@ -127,6 +132,9 @@ class EfficientDet:
         #Convert img to RGB
         frame = cv_image.copy()
 
+        self.frame_count += 1
+        self.total_frames += 1
+
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         # COnverting to uint8
@@ -141,13 +149,23 @@ class EfficientDet:
 
         result = {key:value.numpy() for key,value in result.items()}
         
-        print("Found %d objects." % len(result["detection_scores"]))
-        print("Inference time: ", end_time-start_time)
+        #print("Found %d objects." % len(result["detection_scores"]))
+        #print("Inference time: ", end_time-start_time)
         
         self.create_predictions_list(result["detection_boxes"][0],result["detection_classes"][0], result["detection_scores"][0])
         #image_with_boxes = self.draw_boxes(cv_image,result["detection_boxes"][0],result["detection_classes"][0], result["detection_scores"][0])
         
+        # fps
+        if self.frame_count >= 30:
+            self.end = time.time_ns()
+            self.fps = 1000000000 * self.frame_count / (self.end - self.start)
+            self.frame_count = 0
+            self.start = time.time_ns()
         
+        if self.fps > 0:
+            self.fps_label = "FPS: %.2f" % self.fps
+            cv2.putText(frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)           
+            
         return [self.predictions, frame]
 
 

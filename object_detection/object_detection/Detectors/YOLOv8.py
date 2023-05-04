@@ -1,10 +1,18 @@
 import cv2
 from ultralytics import YOLO
 import os
+import time
 
 class YOLOv8:
   def __init__(self, model_dir_path, weight_file_name, conf_threshold = 0.7, score_threshold = 0.4, nms_threshold = 0.25):
-    # Load model 
+    
+    #FPS
+    self.frame_count = 0
+    self.total_frames = 0
+    self.fps = -1
+    self.start = time.time_ns()
+
+
     self.model_dir_path = model_dir_path
     self.weight_file_name = weight_file_name
 
@@ -46,6 +54,9 @@ class YOLOv8:
 
   def get_predictions(self, cv_image):
     
+    self.frame_count += 1
+    self.total_frames += 1
+
     class_id = []
     confidence = []
     bb = []
@@ -59,7 +70,20 @@ class YOLOv8:
       
     self.create_predictions_list(class_id,confidence,bb)
     result = self.model.predict(cv_image, conf = self.conf_threshold)
-    bb_result = result[0].plot()                  # Frame with bounding boxes
+    frame = result[0].plot()                  # Frame with bounding boxes
 
-    return self.predictions,bb_result
+    print("frame_count : ", self.frame_count)
+
+    if self.frame_count >= 30:
+      self.end = time.time_ns()
+      self.fps = 1000000000 * self.frame_count / (self.end - self.start)
+      self.frame_count = 0
+      self.start = time.time_ns()
+    
+    if self.fps > 0:
+      #print("FPS : ", self.fps)
+      self.fps_label = "FPS: %.2f" % self.fps
+      cv2.putText(frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+
+    return self.predictions, frame
  

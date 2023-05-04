@@ -17,6 +17,11 @@ import matplotlib.pyplot as plt
 class RetinaNet:
     def __init__(self, model_dir_path, weight_file_name, conf_threshold = 0.7, score_threshold = 0.4, nms_threshold = 0.25):
 
+        self.frame_count = 0
+        self.total_frames = 0
+        self.fps = -1
+        self.start = time.time_ns()
+        
         self.predictions = []
         self.conf_threshold = conf_threshold
 
@@ -61,10 +66,13 @@ class RetinaNet:
         input = preprocess_image(cv_image)
         input, scale = resize_image(input)
 
+        self.frame_count += 1
+        self.total_frames += 1
+
         # process image
         start = time.time()
         boxes, scores, labels = self.model.predict_on_batch(np.expand_dims(input, axis=0))
-        print("processing time: ", time.time() - start)
+        #print("processing time: ", time.time() - start)
 
         # correct for image scale
         boxes /= scale
@@ -83,8 +91,18 @@ class RetinaNet:
             draw_box(self.frame, b, color=color)
             
             caption = "{} {:.3f}".format(self.labels_to_names[label], score)
-            print(self.labels_to_names[label])
+            #print(self.labels_to_names[label])
             draw_caption(self.frame, b, caption)
+
+        if self.frame_count >= 30:
+                self.end = time.time_ns()
+                self.fps = 1000000000 * self.frame_count / (self.end - self.start)
+                self.frame_count = 0
+                self.start = time.time_ns()
+            
+        if self.fps > 0:
+            self.fps_label = "FPS: %.2f" % self.fps
+            cv2.putText(self.frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
         return (self.predictions,self.frame)
               

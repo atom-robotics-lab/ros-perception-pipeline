@@ -1,12 +1,9 @@
 import time
 import os
-
 import cv2
 import numpy as np
 
-
 class YOLOv5:
-
     def __init__(self, model_dir_path, weight_file_name, conf_threshold = 0.7, score_threshold = 0.4, nms_threshold = 0.25, is_cuda = 0):
 
         # calculate fps, TODO: create a boolean to enable/diable show_fps
@@ -26,8 +23,7 @@ class YOLOv5:
         self.CONFIDENCE_THRESHOLD = conf_threshold
 
         self.bb_colors = [(255, 255, 0), (0, 255, 0), (0, 255, 255), (255, 0, 0)]
-        self.is_cuda = is_cuda
-        
+        self.is_cuda = is_cuda       
 
         
         # load & build the given model
@@ -186,6 +182,7 @@ class YOLOv5:
                 self.fps = 1000000000 * self.frame_count / (self.end - self.start)
                 self.frame_count = 0
                 self.start = time.time_ns()
+            
             if self.fps > 0:
                 self.fps_label = "FPS: %.2f" % self.fps
                 cv2.putText(self.frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)           
