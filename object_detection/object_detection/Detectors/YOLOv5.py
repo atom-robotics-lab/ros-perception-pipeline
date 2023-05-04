@@ -1,19 +1,10 @@
-#!/usr/bin/env python
-
 import time
 import os
-
 import cv2
 import numpy as np
 
-
 class YOLOv5:
-
-    def __init__(self, model_dir_path, 
-                        conf_threshold,
-                        score_threshold,
-                        nms_threshold,
-                        is_cuda):
+    def __init__(self, model_dir_path, weight_file_name, conf_threshold = 0.7, score_threshold = 0.4, nms_threshold = 0.25, is_cuda = 0):
 
         # calculate fps, TODO: create a boolean to enable/diable show_fps
         self.frame_count = 0
@@ -26,21 +17,24 @@ class YOLOv5:
         self.net = None
         self.predictions = []
         self.model_dir_path = model_dir_path
-        self.model_name = model_name
+        self.weight_file_name = weight_file_name
         self.INPUT_WIDTH = 640
         self.INPUT_HEIGHT = 640
+        self.CONFIDENCE_THRESHOLD = conf_threshold
+
         self.bb_colors = [(255, 255, 0), (0, 255, 0), (0, 255, 255), (255, 0, 0)]
+        self.is_cuda = is_cuda       
 
         
         # load & build the given model
-        self.build_model(is_cuda)
+        self.build_model(self.is_cuda)
         
         # load classes (object labels)
         self.load_classes()
     
     # load model and prepare its backend to either run on GPU or CPU, see if it can be added in constructor
     def build_model(self, is_cuda):
-        model_path = os.path.join(self.model_dir_path, self.model_name)
+        model_path = os.path.join(self.model_dir_path, self.weight_file_name)
 
         try:
             self.net = cv2.dnn.readNet(model_path)
@@ -58,7 +52,7 @@ class YOLOv5:
 
     def detect(self, image):
         # convert image to 640x640 
-        blob = cv2.dnn.blobFromImage(image, 1/255.0, (self.INPUT_WIDTH, INPUT_HEIGHT), swapRB=True, crop=False)
+        blob = cv2.dnn.blobFromImage(image, 1/255.0, (self.INPUT_WIDTH, self.INPUT_HEIGHT), swapRB=True, crop=False)
         self.net.setInput(blob)
         preds = self.net.forward()
         return preds
@@ -83,7 +77,7 @@ class YOLOv5:
         image_width, image_height, _ = input_image.shape
 
         x_factor = image_width / self.INPUT_WIDTH
-        y_factor =  image_height / INPUT_HEIGHT
+        y_factor =  image_height / self.INPUT_HEIGHT
 
         # Iterate through all the 25200 vectors
         for r in range(rows):
@@ -91,7 +85,7 @@ class YOLOv5:
 
             # Continue only if Pc > conf_threshold
             confidence = row[4]
-            if confidence >= CONFIDENCE_THRESHOLD:
+            if confidence >= self.CONFIDENCE_THRESHOLD:
                 
                 # One-hot encoded vector representing class of object
                 classes_scores = row[5:]
@@ -185,12 +179,13 @@ class YOLOv5:
             # fps
             if self.frame_count >= 30:
                 self.end = time.time_ns()
-                self.fps = 1000000000 * frame_count / (self.end - self.start)
+                self.fps = 1000000000 * self.frame_count / (self.end - self.start)
                 self.frame_count = 0
                 self.start = time.time_ns()
+            
             if self.fps > 0:
                 self.fps_label = "FPS: %.2f" % self.fps
-                cv2.putText(self.frame, fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)           
+                cv2.putText(self.frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)           
             
             return (self.predictions, self.frame)
     

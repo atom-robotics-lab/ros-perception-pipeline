@@ -1,0 +1,8 @@
+ObjectDetection:
+  ros__parameters:
+    output_bb_topic: object_detection/img_bb
+    output_img_topic: object_detection/img
+    model_params:
+      detector_type: YOLOv5
+      model_dir_path: ~/Desktop/ros_workspaces/perception_ws/model/yolov5
+      weight_file_name: auto_final.onnx
