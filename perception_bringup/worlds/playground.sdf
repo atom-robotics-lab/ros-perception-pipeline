@@ -10,6 +10,11 @@
     <plugin name='gz::sim::systems::UserCommands' filename='gz-sim-user-commands-system'/>
     <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system'/>
     <plugin name='gz::sim::systems::Contact' filename='gz-sim-contact-system'/>
+    <plugin
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
     <gravity>0 0 -9.8000000000000007</gravity>
     <magnetic_field>5.5644999999999998e-06 2.2875799999999999e-05 -4.2388400000000002e-05</magnetic_field>
     <atmosphere type='adiabatic'/>
@@ -70,10 +75,10 @@
 
     <model name="camera">
       <static>true</static>
-      <pose>-0.77 0.01 1.0 0 0.0 3.14</pose>
+      <pose>-0.77 0.00 1.03 0 0.0 1.57</pose>
       <link name="link">
         <static>true</static>
-        <pose>0.05 0.05 0.05 0 0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <inertial>
           <mass>0.1</mass>
           <inertia>
