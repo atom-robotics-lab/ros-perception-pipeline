@@ -26,6 +26,7 @@ class EfficientDet:
         self.total_frames = 0
         self.fps = -1
         self.start = time.time_ns()
+        self.frame = None
         
         self.model_dir_path = model_dir_path
         self.weight_file_name = weight_file_name
@@ -114,8 +115,7 @@ class EfficientDet:
         for i in range(min(boxes.shape[0], max_boxes)):
             if confidences[i] >= self.conf:
                 ymin, xmin, ymax, xmax = tuple(boxes[i])
-                display_str = "{}: {}%".format(self.labels[class_ids[i]],
-                                                int(100 * confidences[i]))
+                display_str = "{}: {}%".format(self.labels[class_ids[i]], int(100 * confidences[i]))
                 color = colors[hash(class_ids[i]) % len(colors)]
                 image_pil = Image.fromarray(np.uint8(image)).convert("RGB")
                 self.draw_bounding_box_on_image(image_pil,ymin,xmin,ymax,xmax,color,font,display_str_list=[display_str])
@@ -129,44 +129,44 @@ class EfficientDet:
 
     def get_predictions(self,cv_image):
 
-        #Convert img to RGB
-        frame = cv_image.copy()
-
-        self.frame_count += 1
-        self.total_frames += 1
-
-        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-        # COnverting to uint8
-        rgb_tensor = tf.convert_to_tensor(rgb, dtype=tf.uint8)
-
-        #Add dims to rgb_tensor
-        rgb_tensor = tf.expand_dims(rgb_tensor , 0)
-
-        start_time = time.time()
-        result = self.detector(rgb_tensor)
-        end_time = time.time()
-
-        result = {key:value.numpy() for key,value in result.items()}
+        if cv_image is None:
+            # TODO: show warning message (different color, maybe)
+            return None,None
         
-        #print("Found %d objects." % len(result["detection_scores"]))
-        #print("Inference time: ", end_time-start_time)
-        
-        self.create_predictions_list(result["detection_boxes"][0],result["detection_classes"][0], result["detection_scores"][0])
-        #image_with_boxes = self.draw_boxes(cv_image,result["detection_boxes"][0],result["detection_classes"][0], result["detection_scores"][0])
-        
-        # fps
-        if self.frame_count >= 30:
-            self.end = time.time_ns()
-            self.fps = 1000000000 * self.frame_count / (self.end - self.start)
-            self.frame_count = 0
-            self.start = time.time_ns()
-        
-        if self.fps > 0:
-            self.fps_label = "FPS: %.2f" % self.fps
-            cv2.putText(frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)           
+        else :
+            #Convert img to RGB
+            self.frame = cv_image
+
+            self.frame_count += 1
+            self.total_frames += 1
+
+            rgb = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
+
+            # COnverting to uint8
+            rgb_tensor = tf.convert_to_tensor(rgb, dtype=tf.uint8)
+
+            #Add dims to rgb_tensor
+            rgb_tensor = tf.expand_dims(rgb_tensor , 0)
+
             
-        return [self.predictions, frame]
+            result = self.detector(rgb_tensor)
+            result = {key:value.numpy() for key,value in result.items()}
+
+            self.create_predictions_list(result["detection_boxes"][0],result["detection_classes"][0], result["detection_scores"][0])
+            image_with_boxes = self.draw_boxes(cv_image,result["detection_boxes"][0],result["detection_classes"][0], result["detection_scores"][0])
+
+            # fps
+            if self.frame_count >= 30:
+                self.end = time.time_ns()
+                self.fps = 1000000000 * self.frame_count / (self.end - self.start)
+                self.frame_count = 0
+                self.start = time.time_ns()
+
+            if self.fps > 0:
+                self.fps_label = "FPS: %.2f" % self.fps
+                cv2.putText(self.frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)           
+
+            return [self.predictions, image_with_boxes]
 
 
     def detect_img(self,image_url):

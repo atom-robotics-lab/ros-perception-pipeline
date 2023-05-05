@@ -148,8 +148,7 @@ class YOLOv5:
     def get_predictions(self, cv_image):
         if cv_image is None:
             # TODO: show warning message (different color, maybe)
-            print("Frame is None!")
-            return
+            return None,None
         else:
             self.frame = cv_image
 
