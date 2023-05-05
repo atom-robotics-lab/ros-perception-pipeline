@@ -11,6 +11,7 @@ class YOLOv8:
     self.total_frames = 0
     self.fps = -1
     self.start = time.time_ns()
+    self.frame = None
 
 
     self.model_dir_path = model_dir_path
@@ -53,37 +54,43 @@ class YOLOv8:
         self.predictions.append(obj_dict)
 
   def get_predictions(self, cv_image):
+
+    if cv_image is None:
+      # TODO: show warning message (different color, maybe)
+      return None,None
     
-    self.frame_count += 1
-    self.total_frames += 1
+    else :     
+      self.frame = cv_image   
+      self.frame_count += 1
+      self.total_frames += 1
 
-    class_id = []
-    confidence = []
-    bb = []
-    result = self.model.predict(cv_image, conf = self.conf_threshold) # Perform object detection on image
-    row = result[0].boxes
+      class_id = []
+      confidence = []
+      bb = []
+      result = self.model.predict(self.frame, conf = self.conf_threshold) # Perform object detection on image
+      row = result[0].boxes
 
-    for box in row:
-      class_id.append(box.cls)
-      confidence.append(box.conf)
-      bb.append(box.xyxy)
-      
-    self.create_predictions_list(class_id,confidence,bb)
-    result = self.model.predict(cv_image, conf = self.conf_threshold)
-    frame = result[0].plot()                  # Frame with bounding boxes
+      for box in row:
+        class_id.append(box.cls)
+        confidence.append(box.conf)
+        bb.append(box.xyxy)
 
-    print("frame_count : ", self.frame_count)
+      self.create_predictions_list(class_id,confidence,bb)
+      result = self.model.predict(self.frame, conf = self.conf_threshold)
+      output_frame = result[0].plot()                  # Frame with bounding boxes
 
-    if self.frame_count >= 30:
-      self.end = time.time_ns()
-      self.fps = 1000000000 * self.frame_count / (self.end - self.start)
-      self.frame_count = 0
-      self.start = time.time_ns()
-    
-    if self.fps > 0:
-      #print("FPS : ", self.fps)
-      self.fps_label = "FPS: %.2f" % self.fps
-      cv2.putText(frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+      print("frame_count : ", self.frame_count)
 
-    return self.predictions, frame
- 
+      if self.frame_count >= 30:
+        self.end = time.time_ns()
+        self.fps = 1000000000 * self.frame_count / (self.end - self.start)
+        self.frame_count = 0
+        self.start = time.time_ns()
+
+      if self.fps > 0:
+        #print("FPS : ", self.fps)
+        self.fps_label = "FPS: %.2f" % self.fps
+        cv2.putText(output_frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+
+      return self.predictions, output_frame
+  

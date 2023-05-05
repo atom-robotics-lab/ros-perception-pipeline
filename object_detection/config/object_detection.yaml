@@ -1,8 +1,9 @@
 ObjectDetection:
   ros__parameters:
+    input_img_topic: color_camera/img_raw
     output_bb_topic: object_detection/img_bb
     output_img_topic: object_detection/img
     model_params:
-      detector_type: YOLOv5
-      model_dir_path: ~/Desktop/ros_workspaces/perception_ws/model/yolov5
-      weight_file_name: auto_final.onnx
+      detector_type: RetinaNet
+      model_dir_path: ~/Desktop/ros_workspaces/perception_ws/model/retinanet
+      weight_file_name: resnet.h5
