@@ -31,15 +31,23 @@ class EfficientDet:
         self.img_width=800
         self.predictions=[]
         self.bb_colors = [(255, 255, 0), (0, 255, 0), (0, 255, 255), (255, 0, 0)]
-        
 
         self.build_model()
         self.load_classes()
 
     def build_model(self) :
-        module_handle="https://tfhub.dev/tensorflow/efficientdet/d0/1"
-        # Loading model directly from TensorFlow Hub
-        self.detector = hub.load(module_handle)
+        loaded = tf.saved_model.load(self.model_dir)
+        infer = loaded.signatures['serving_default']
+
+        # Get the input and output tensors from the loaded model
+        input_tensor = infer.inputs['input_tensor']
+        output_tensors = infer.outputs
+
+        # Create an instance of the object detection model
+        model = tf.keras.Model(inputs=input_tensor, outputs=output_tensors)
+        # Load the weights from the variables directory
+        checkpoint = tf.train.Checkpoint(model=model)
+        checkpoint.restore(tf.train.latest_checkpoint(self.weight_file_name))
 
     def load_classes(self):
         self.labels = []
