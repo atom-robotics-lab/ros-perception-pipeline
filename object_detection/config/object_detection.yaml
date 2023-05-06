@@ -1,9 +1,9 @@
-ObjectDetection:
+object_detection:
   ros__parameters:
     input_img_topic: color_camera/img_raw
     output_bb_topic: object_detection/img_bb
     output_img_topic: object_detection/img
     model_params:
       detector_type: RetinaNet
-      model_dir_path: ~/Desktop/ros_workspaces/perception_ws/model/retinanet
+      model_dir_path: model/retinanet
       weight_file_name: resnet.h5

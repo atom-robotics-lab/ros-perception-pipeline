@@ -118,8 +118,10 @@ class RetinaNet:
 
     def load_classes(self):
         self.class_list = []
+        
         with open(self.model_dir_path + "/classes.txt", "r") as f:
             self.class_list = [cname.strip() for cname in f.readlines()]
+        
         return self.class_list
     
     def create_predictions_list(self, class_ids, confidences, boxes):
@@ -188,58 +190,4 @@ class RetinaNet:
             return (self.predictions, self.frame)
                   
             
-        
-
-if __name__ == '__main__' :
-    
-
-    ok = RetinaNet()
-        
-
-            self.total_frames += 1
-
-            # process image
-            start = time.time()
-            boxes, scores, labels = self.model.predict_on_batch(np.expand_dims(input, axis=0))
-            #print("processing time: ", time.time() - start)
-
-            # correct for image scale
-            boxes /= scale
-
-            self.create_predictions_list(labels, scores, boxes)
-
-            # visualize detections
-            for box, score, label in zip(boxes[0], scores[0], labels[0]):
-                # scores are sorted so we can break
-                if score < self.conf_threshold:
-                    break
-
-                color = label_color(label)
-
-                b = box.astype(int)
-                draw_box(self.frame, b, color=color)
-
-                caption = "{} {:.3f}".format(self.labels_to_names[label], score)
-                #print(self.labels_to_names[label])
-                draw_caption(self.frame, b, caption)
-
-            if self.frame_count >= 30:
-                    self.end = time.time_ns()
-                    self.fps = 1000000000 * self.frame_count / (self.end - self.start)
-                    self.frame_count = 0
-                    self.start = time.time_ns()
-
-            if self.fps > 0:
-                self.fps_label = "FPS: %.2f" % self.fps
-                cv2.putText(self.frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-
-            return (self.predictions,self.frame)
-
-
-        
-
-if __name__ == '__main__' :
-    
-
-    ok = RetinaNet()
         
