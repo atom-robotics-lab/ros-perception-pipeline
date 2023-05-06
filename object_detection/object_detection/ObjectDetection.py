@@ -19,10 +19,10 @@ class ObjectDetection(Node):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('input_img_topic', 'color_camera/img_raw')
+                ('input_img_topic', 'color_camera/img_raw'),
                 ('output_bb_topic', 'object_detection/img_bb'),
                 ('output_img_topic', 'object_detection/img'),
-                ('model_params.detector_type', 'YOLO'),
+                ('model_params.detector_type', 'YOLOv5'),
                 ('model_params.model_dir_path', 'model/yolov5'),
                 ('model_params.weight_file_name', "auto_final.onnx")
             ]
@@ -37,15 +37,19 @@ class ObjectDetection(Node):
 
 
         if self.detector_type == "YOLOv5" :
+            print("Using detector : {}".format(self.detector_type))
             self.detector = YOLOv5.YOLOv5(self.model_dir_path, self.weight_file_name)
 
         elif self.detector_type == "YOLOv8" :
+            print("Using detector : {}".format(self.detector_type))
             self.detector = YOLOv8.YOLOv8(self.model_dir_path, self.weight_file_name)
 
         elif self.detector_type == "RetinaNet" :
+            print("Using detector : {}".format(self.detector_type))
             self.detector = RetinaNet.RetinaNet(self.model_dir_path, self.weight_file_name)
 
         elif self.detector_type == "EfficientDet" :
+            print("Using detector : {}".format(self.detector_type))
             self.detector = EfficientDet.EfficientDet(self.model_dir_path, self.weight_file_name)
 
         else :
