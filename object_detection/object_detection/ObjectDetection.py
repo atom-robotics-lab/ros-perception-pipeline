@@ -1,13 +1,13 @@
 #! /usr/bin/env python3
 
+import os
+import importlib
+
 import rclpy
 from rclpy.node import Node
 
 from sensor_msgs.msg import Image
 from vision_msgs.msg import BoundingBox2D
-
-
-from .Detectors import YOLOv5, YOLOv8, EfficientDet, RetinaNet 
 
 from cv_bridge import CvBridge
 
@@ -15,6 +15,12 @@ from cv_bridge import CvBridge
 class ObjectDetection(Node):
     def __init__(self):
         super().__init__('object_detection')
+
+        # create an empty list that will hold the names of all available detector
+        self.available_detectors = []
+        
+        # fill available_detectors with the detectors from Detectors dir
+        self.discover_detectors()
 
         self.declare_parameters(
             namespace='',
@@ -33,34 +39,34 @@ class ObjectDetection(Node):
         self.output_img_topic = self.get_parameter('output_img_topic').value
         self.detector_type = self.get_parameter('model_params.detector_type').value
         self.model_dir_path = self.get_parameter('model_params.model_dir_path').value
-        self.weight_file_name = self.get_parameter('model_params.weight_file_name').value
-
-
-        if self.detector_type == "YOLOv5" :
-            print("Using detector : {}".format(self.detector_type))
-            self.detector = YOLOv5.YOLOv5(self.model_dir_path, self.weight_file_name)
-
-        elif self.detector_type == "YOLOv8" :
-            print("Using detector : {}".format(self.detector_type))
-            self.detector = YOLOv8.YOLOv8(self.model_dir_path, self.weight_file_name)
-
-        elif self.detector_type == "RetinaNet" :
-            print("Using detector : {}".format(self.detector_type))
-            self.detector = RetinaNet.RetinaNet(self.model_dir_path, self.weight_file_name)
-
-        elif self.detector_type == "EfficientDet" :
-            print("Using detector : {}".format(self.detector_type))
-            self.detector = EfficientDet.EfficientDet(self.model_dir_path, self.weight_file_name)
-
-        else :
-            print("The detector type : {} is not supported".format(self.detector_type))
-
+        self.weight_file_name = self.get_parameter('model_params.weight_file_name').value  
+        
+        # raise an exception if specified detector was not found
+        if self.detector_type not in self.available_detectors:
+            raise ModuleNotFoundError("Detector specified in config was not found. " + 
+                                        "Check the Detectors dir for available detectors.")
+        else:
+            self.load_detector()
+        
         self.img_pub = self.create_publisher(Image, self.output_img_topic, 10)
         self.bb_pub = None
         self.img_sub = self.create_subscription(Image, self.input_img_topic, self.detection_cb, 10)
 
         self.bridge = CvBridge()
 
+    def discover_detectors(self):
+        dir_contents = os.listdir("../Detectors") 
+
+        for entity in dir_contents:
+            if entity.endswith('.py'):
+                self.available_detectors.append(entity[:-3])
+
+        self.available_detectors.remove('DetectorBase')
+        self.available_detectors.remove('__init__')
+        
+    def load_detector(self):
+        pass
+    
     def detection_cb(self, img_msg):
         print("detection_cb")
         input = self.bridge.imgmsg_to_cv2(img_msg, "bgr8")
