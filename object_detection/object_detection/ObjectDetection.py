@@ -55,7 +55,7 @@ class ObjectDetection(Node):
         self.bridge = CvBridge()
 
     def discover_detectors(self):
-        dir_contents = os.listdir("../Detectors") 
+        dir_contents = os.listdir("Detectors") 
 
         for entity in dir_contents:
             if entity.endswith('.py'):
@@ -65,6 +65,7 @@ class ObjectDetection(Node):
         self.available_detectors.remove('__init__')
         
     def load_detector(self):
+        print("Your detector : {} has been loaded !".format(self.detector_type))
         pass
     
     def detection_cb(self, img_msg):
