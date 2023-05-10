@@ -1,54 +1,35 @@
-import tensorflow_hub as hub
+
 import cv2
-import numpy
-import pandas as pd
 import tensorflow as tf
-import matplotlib.pyplot as plt
-
-import tempfile
-
-
-# For drawing onto the image.
+import os
 import numpy as np
-from PIL import Image
-from PIL import ImageColor
-from PIL import ImageDraw
-from PIL import ImageFont
-from PIL import ImageOps
 
 # For measuring the inference time.
 import time 
 
 class EfficientDet:
-    def __init__(self, model_dir_path, weight_file_name, conf_threshold = 0.7, score_threshold = 0.25, nms_threshold = 0.4):
+    def __init__(self, model_dir_path, weight_file_name, conf_threshold = 0.35, score_threshold = 0.25, nms_threshold = 0.4):
         
         self.model_dir_path = model_dir_path
-        self.weight_file_name = weight_file_name
+        self.weight_file_name = weight_file_name        
 
-        self.conf=conf_threshold
+        self.conf = conf_threshold
         
-        self.img_height=800
-        self.img_width=800
-        self.predictions=[]
+        self.img_height = 640
+        self.img_width = 640
+        self.predictions = []
         self.bb_colors = [(255, 255, 0), (0, 255, 0), (0, 255, 255), (255, 0, 0)]
 
         self.build_model()
         self.load_classes()
 
     def build_model(self) :
-        loaded = tf.saved_model.load(self.model_dir)
-        infer = loaded.signatures['serving_default']
-
-        # Get the input and output tensors from the loaded model
-        input_tensor = infer.inputs['input_tensor']
-        output_tensors = infer.outputs
-
-        # Create an instance of the object detection model
-        model = tf.keras.Model(inputs=input_tensor, outputs=output_tensors)
-        # Load the weights from the variables directory
-        checkpoint = tf.train.Checkpoint(model=model)
-        checkpoint.restore(tf.train.latest_checkpoint(self.weight_file_name))
-
+        model_path = os.path.join(self.model_dir_path, self.weight_file_name)
+        try :
+            self.detector = tf.saved_model.load(model_path)
+        except :
+            raise Exception("Error loading given model from path: {}. Maybe the file doesn't exist?".format(model_path))
+        
     def load_classes(self):
         self.labels = []
         with open(self.model_dir_path + "/classes.txt", "r") as f:
@@ -59,19 +40,34 @@ class EfficientDet:
     # create list of dictionary containing predictions
     def create_predictions_list(self, class_ids, confidences, boxes):
         for i in range(len(class_ids)):
-            obj_dict = {
-                "class_id": class_ids[i],
-                "confidence": confidences[i],
-                "box": boxes[i]
-            }
-            self.predictions.append(obj_dict)
+            if confidences[i] >= self.conf:
+                obj_dict = {
+                    "class_id": class_ids[i],
+                    "confidence": confidences[i],
+                    "box": boxes[i]
+                }
+                self.predictions.append(obj_dict)
 
+    def rescale_box(self,pred_boxes):
+        rescaled_boxes = []
 
+        # rescale boxes
+        for box in pred_boxes:
+            ymin, xmin, ymax, xmax = tuple(box)
+            (left, right, top, bottom) = (xmin * self.image_width, xmax * self.image_width,
+                                            ymin * self.image_height, ymax * self.image_height)
+            rescaled_box = np.array([left,top,right,bottom]).astype(int)
+            rescaled_boxes.append(rescaled_box)    
+
+        return rescaled_boxes
 
     def get_predictions(self,cv_image):
 
         #Convert img to RGB
         frame = cv_image.copy()
+
+        # Image dimensions
+        self.image_height, self.image_width, _ = frame.shape
 
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
@@ -85,26 +81,26 @@ class EfficientDet:
         result = self.detector(rgb_tensor)
         end_time = time.time()
 
+        # refactor resutls
         result = {key:value.numpy() for key,value in result.items()}
-        
-        print("Found %d objects." % len(result["detection_scores"]))
+        result["detection_boxes"][0] = self.rescale_box(result["detection_boxes"][0])
+        result["detection_classes"][0] = result["detection_classes"][0] -1
+
+        print("Found %d objects." % len(result["detection_scores"][0]))
         print("Inference time: ", end_time-start_time)
         
-        self.create_predictions_list(result["detection_boxes"][0],result["detection_classes"][0], result["detection_scores"][0])
-        
+        self.create_predictions_list(result["detection_classes"][0], result["detection_scores"][0], result["detection_boxes"][0].astype(int))
+
         # draw bounding box and add label
-        for (classid, confidence, box) in zip(result["detection_classes"][0], result["detection_scores"][0], result["detection_boxes"][0]):
-            color = self.bb_colors[int(classid) % len(self.bb_colors)]
-            cv2.rectangle(frame, box, color, 2)
-            cv2.rectangle(frame, (box[0], box[1] - 20), (box[0] + box[2], box[1]), color, -1)
-            try :
-                cv2.putText(frame, self.labels[classid]+" "+confidence, (box[0], box[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, .5, (0,0,0))
-            except :
-                pass
-        
+        for (classid, confidence, box) in zip(result["detection_classes"][0], result["detection_scores"][0], result["detection_boxes"][0].astype(int)):
+            if confidence >= self.conf:
+                color = self.bb_colors[int(classid) % len(self.bb_colors)]
+                cv2.rectangle(frame, (box[0], box[1]), (box[2], box[3]), color, 2)
+                cv2.putText(frame, f"{self.labels[int(classid)]} {confidence:.2f}", (box[0], box[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0),2)
+
+        cv2.imshow("image",frame)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        print(self.predictions)
+
         return self.predictions, frame
-
-
-if __name__=='__main__':
-  # Load model 
-    det = EfficientDet()
