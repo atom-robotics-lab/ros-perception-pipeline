@@ -81,16 +81,15 @@ class YOLOv8:
 
       print("frame_count : ", self.frame_count)
 
-      if self.frame_count >= 30:
+      if self.frame_count >= 30 :
         self.end = time.time_ns()
         self.fps = 1000000000 * self.frame_count / (self.end - self.start)
         self.frame_count = 0
         self.start = time.time_ns()
 
       if self.fps > 0:
-        #print("FPS : ", self.fps)
         self.fps_label = "FPS: %.2f" % self.fps
-        cv2.putText(output_frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+        cv2.putText(output_frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
       return self.predictions, output_frame
   

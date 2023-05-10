@@ -19,7 +19,7 @@ class ObjectDetection(Node):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('input_img_topic', 'color_camera/img_raw'),
+                ('input_img_topic', 'color_camera/image_raw'),
                 ('output_bb_topic', 'object_detection/img_bb'),
                 ('output_img_topic', 'object_detection/img'),
                 ('model_params.detector_type', 'YOLOv5'),
@@ -57,12 +57,12 @@ class ObjectDetection(Node):
 
         self.img_pub = self.create_publisher(Image, self.output_img_topic, 10)
         self.bb_pub = None
-
         self.img_sub = self.create_subscription(Image, self.input_img_topic, self.detection_cb, 10)
 
         self.bridge = CvBridge()
 
     def detection_cb(self, img_msg):
+        print("detection_cb")
         input = self.bridge.imgmsg_to_cv2(img_msg, "bgr8")
 
         predictions, frame = self.detector.get_predictions(cv_image = input)

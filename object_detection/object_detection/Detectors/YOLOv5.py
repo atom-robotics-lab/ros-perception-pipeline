@@ -184,7 +184,7 @@ class YOLOv5:
             
             if self.fps > 0:
                 self.fps_label = "FPS: %.2f" % self.fps
-                cv2.putText(self.frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)           
+                cv2.putText(self.frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)           
             
             return (self.predictions, self.frame)
     

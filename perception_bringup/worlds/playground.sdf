@@ -200,7 +200,7 @@
             <property type="bool" key="showTitleBar">false</property>
             <property type="string" key="state">docked</property>
         </gz-gui>
-        <topic>color_camera/img_raw</topic>
+        <topic>color_camera/image_raw</topic>
     </plugin>
   </gui>
     <physics name='1ms' type='ignored'>
