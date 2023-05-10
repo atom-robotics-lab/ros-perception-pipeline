@@ -3,7 +3,10 @@ import os
 import cv2
 import numpy as np
 
-class YOLOv5:
+from .DetectorBase import DetectorBase
+
+
+class YOLOv5(DetectorBase):
     def __init__(self, model_dir_path, weight_file_name, conf_threshold = 0.7, score_threshold = 0.4, nms_threshold = 0.25, is_cuda = 0):
 
         # calculate fps, TODO: create a boolean to enable/diable show_fps
@@ -143,7 +146,6 @@ class YOLOv5:
             }
 
             self.predictions.append(obj_dict)
-        
 
     def get_predictions(self, cv_image):
         if cv_image is None:
@@ -188,5 +190,6 @@ class YOLOv5:
             
             return (self.predictions, self.frame)
     
-    
 
+def register():
+    return YOLOv5()

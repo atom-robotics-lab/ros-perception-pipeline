@@ -43,10 +43,12 @@ class ObjectDetection(Node):
         
         # raise an exception if specified detector was not found
         if self.detector_type not in self.available_detectors:
-            raise ModuleNotFoundError("Detector specified in config was not found. " + 
+            raise ModuleNotFoundError(self.detector_type + " Detector specified in config was not found. " + 
                                         "Check the Detectors dir for available detectors.")
         else:
             self.load_detector()
+        
+        print(self.detector.detector_name("SHIGGY"))
         
         self.img_pub = self.create_publisher(Image, self.output_img_topic, 10)
         self.bb_pub = None
@@ -54,8 +56,10 @@ class ObjectDetection(Node):
 
         self.bridge = CvBridge()
 
+    
     def discover_detectors(self):
-        dir_contents = os.listdir("Detectors") 
+        curr_dir = os.path.dirname(__file__)
+        dir_contents = os.listdir(curr_dir + "/Detectors") 
 
         for entity in dir_contents:
             if entity.endswith('.py'):
@@ -64,9 +68,12 @@ class ObjectDetection(Node):
         self.available_detectors.remove('DetectorBase')
         self.available_detectors.remove('__init__')
         
+    
     def load_detector(self):
+        detector_mod = importlib.import_module(".Detectors." + self.detector_type, "object_detection")
+        self.detector = detector_mod.register()
         print("Your detector : {} has been loaded !".format(self.detector_type))
-        pass
+    
     
     def detection_cb(self, img_msg):
         print("detection_cb")
