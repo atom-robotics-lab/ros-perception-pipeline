@@ -9,4 +9,3 @@ object_detection:
       weight_file_name: resnet.h5
       confidence_threshold : 0.7
       show_fps : 1
-      is_cuda : 0
