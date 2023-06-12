@@ -146,7 +146,3 @@ class YOLOv5(DetectorBase):
             print("Detected ids: ", class_ids)         
             
             return self.predictions
-    
-
-def register():
-    return YOLOv5()

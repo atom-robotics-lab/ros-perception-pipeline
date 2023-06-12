@@ -76,7 +76,8 @@ class ObjectDetection(Node):
     
     def load_detector(self):
         detector_mod = importlib.import_module(".Detectors." + self.detector_type, "object_detection")
-        self.detector = detector_mod.register()
+        detector_class = getattr(detector_mod, self.detector_type)
+        self.detector = detector_class()
         
         self.detector.build_model(self.model_dir_path, self.weight_file_name)
         self.detector.load_classes(self.model_dir_path)
