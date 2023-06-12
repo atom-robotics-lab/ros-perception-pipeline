@@ -277,7 +277,7 @@
 
     <model name="camera">
       <static>true</static>
-      <pose>-0.77 0.00 1.03 0 0.0 1.57</pose>
+      <pose>-0.77 0.20 1.41 0 0.37 1.57</pose>
       <link name="link">
         <static>true</static>
         <pose>0 0 0 0 0 0</pose>
