@@ -7,7 +7,7 @@ import rclpy
 from rclpy.node import Node
 
 from sensor_msgs.msg import Image
-from vision_msgs.msg import BoundingBox2D
+#from vision_msgs.msg import BoundingBox2D
 
 from cv_bridge import CvBridge
 
@@ -25,12 +25,13 @@ class ObjectDetection(Node):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('input_img_topic', 'color_camera/image_raw'),
-                ('output_bb_topic', 'object_detection/img_bb'),
-                ('output_img_topic', 'object_detection/img'),
-                ('model_params.detector_type', 'YOLOv5'),
-                ('model_params.model_dir_path', '/home/singh/ros_workspaces/perception_pipeline_ws/models/'),
-                ('model_params.weight_file_name', 'auto_final.onnx'),
+
+                ('input_img_topic', ""),
+                ('output_bb_topic', ""),
+                ('output_img_topic', ""),
+                ('model_params.detector_type', ""),
+                ('model_params.model_dir_path', ""),
+                ('model_params.weight_file_name', ""),
                 ('model_params.confidence_threshold', 0.7),
                 ('model_params.show_fps', 1),
             ]
