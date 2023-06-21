@@ -1,13 +1,13 @@
 <?xml version="1.0" ?>
-<sdf version='1.10'>
+<sdf version='1.9'>
   <world name='empty'>
   <gui fullscreen="0">
       <plugin filename="MinimalScene" name="3D View">
-        <ign-gui>
+        <ignition-gui>
             <title>3D View</title>
             <property type="bool" key="showTitleBar">false</property>
             <property type="string" key="state">docked</property>
-        </ign-gui>
+        </ignition-gui>
         <engine>ogre2</engine>
         <scene>scene</scene>
         <ambient_light>0.4 0.4 0.4</ambient_light>
@@ -17,87 +17,87 @@
 
       <!-- Plugins that add functionality to the scene -->
       <plugin filename="EntityContextMenuPlugin" name="Entity context menu">
-          <ign-gui>
+          <ignition-gui>
               <property key="state" type="string">floating</property>
               <property key="width" type="double">5</property>
               <property key="height" type="double">5</property>
               <property key="showTitleBar" type="bool">false</property>
-          </ign-gui>
+          </ignition-gui>
       </plugin>
 
       <plugin filename="GzSceneManager" name="Scene Manager">
-          <ign-gui>
+          <ignition-gui>
               <property key="resizable" type="bool">false</property>
               <property key="width" type="double">5</property>
               <property key="height" type="double">5</property>
               <property key="state" type="string">floating</property>
               <property key="showTitleBar" type="bool">false</property>
-          </ign-gui>
+          </ignition-gui>
       </plugin>
 
       <plugin filename="InteractiveViewControl" name="Interactive view control">
-          <ign-gui>
+          <ignition-gui>
               <property key="resizable" type="bool">false</property>
               <property key="width" type="double">5</property>
               <property key="height" type="double">5</property>
               <property key="state" type="string">floating</property>
               <property key="showTitleBar" type="bool">false</property>
-          </ign-gui>
+          </ignition-gui>
       </plugin>
 
       <plugin filename="CameraTracking" name="Camera Tracking">
-          <ign-gui>
+          <ignition-gui>
               <property key="resizable" type="bool">false</property>
               <property key="width" type="double">5</property>
               <property key="height" type="double">5</property>
               <property key="state" type="string">floating</property>
               <property key="showTitleBar" type="bool">false</property>
-          </ign-gui>
+          </ignition-gui>
       </plugin>
 
       <plugin filename="MarkerManager" name="Marker manager">
-          <ign-gui>
+          <ignition-gui>
               <property key="resizable" type="bool">false</property>
               <property key="width" type="double">5</property>
               <property key="height" type="double">5</property>
               <property key="state" type="string">floating</property>
               <property key="showTitleBar" type="bool">false</property>
-          </ign-gui>
+          </ignition-gui>
       </plugin>
 
       <plugin filename="SelectEntities" name="Select Entities">
-          <ign-gui>
+          <ignition-gui>
               <property key="resizable" type="bool">false</property>
               <property key="width" type="double">5</property>
               <property key="height" type="double">5</property>
               <property key="state" type="string">floating</property>
               <property key="showTitleBar" type="bool">false</property>
-          </ign-gui>
+          </ignition-gui>
       </plugin>
 
       <plugin filename="Spawn" name="Spawn Entities">
-          <ign-gui>
+          <ignition-gui>
               <property key="resizable" type="bool">false</property>
               <property key="width" type="double">5</property>
               <property key="height" type="double">5</property>
               <property key="state" type="string">floating</property>
               <property key="showTitleBar" type="bool">false</property>
-          </ign-gui>
+          </ignition-gui>
       </plugin>
 
       <plugin filename="VisualizationCapabilities" name="Visualization Capabilities">
-          <ign-gui>
+          <ignition-gui>
               <property key="resizable" type="bool">false</property>
               <property key="width" type="double">5</property>
               <property key="height" type="double">5</property>
               <property key="state" type="string">floating</property>
               <property key="showTitleBar" type="bool">false</property>
-          </ign-gui>
+          </ignition-gui>
       </plugin>
 
     <!-- World control -->
     <plugin filename="WorldControl" name="World control">
-        <ign-gui>
+        <ignition-gui>
             <title>World control</title>
             <property type="bool" key="showTitleBar">false</property>
             <property type="bool" key="resizable">false</property>
@@ -108,7 +108,7 @@
                 <line own="left" target="left"/>
                 <line own="bottom" target="bottom"/>
             </anchors>
-        </ign-gui>
+        </ignition-gui>
         <play_pause>true</play_pause>
         <step>true</step>
         <start_paused>true</start_paused>
@@ -117,7 +117,7 @@
 
     <!-- World statistics -->
     <plugin filename="WorldStats" name="World stats">
-        <ign-gui>
+        <ignition-gui>
             <title>World stats</title>
             <property type="bool" key="showTitleBar">false</property>
             <property type="bool" key="resizable">false</property>
@@ -129,7 +129,7 @@
                 <line own="right" target="right"/>
                 <line own="bottom" target="bottom"/>
             </anchors>
-        </ign-gui>
+        </ignition-gui>
         <sim_time>true</sim_time>
         <real_time>true</real_time>
         <real_time_factor>true</real_time_factor>
@@ -138,7 +138,7 @@
 
     <!-- Insert simple shapes -->
     <plugin filename="Shapes" name="Shapes">
-        <ign-gui>
+        <ignition-gui>
             <property key="resizable" type="bool">false</property>
             <property key="x" type="double">0</property>
             <property key="y" type="double">0</property>
@@ -147,12 +147,12 @@
             <property key="state" type="string">floating</property>
             <property key="showTitleBar" type="bool">false</property>
             <property key="cardBackground" type="string">#666666</property>
-        </ign-gui>
+        </ignition-gui>
     </plugin>
 
     <!-- Insert lights -->
     <plugin filename="Lights" name="Lights">
-        <ign-gui>
+        <ignition-gui>
             <property key="resizable" type="bool">false</property>
             <property key="x" type="double">250</property>
             <property key="y" type="double">0</property>
@@ -161,12 +161,12 @@
             <property key="state" type="string">floating</property>
             <property key="showTitleBar" type="bool">false</property>
             <property key="cardBackground" type="string">#666666</property>
-        </ign-gui>
+        </ignition-gui>
     </plugin>
 
     <!-- Translate / rotate -->
     <plugin filename="TransformControl" name="Transform control">
-        <ign-gui>
+        <ignition-gui>
             <property key="resizable" type="bool">false</property>
             <property key="x" type="double">0</property>
             <property key="y" type="double">50</property>
@@ -175,31 +175,31 @@
             <property key="state" type="string">floating</property>
             <property key="showTitleBar" type="bool">false</property>
             <property key="cardBackground" type="string">#777777</property>
-        </ign-gui>
+        </ignition-gui>
     </plugin>
 
     <!-- Inspector -->
     <plugin filename="ComponentInspector" name="Component inspector">
-        <ign-gui>
+        <ignition-gui>
             <property type="bool" key="showTitleBar">false</property>
             <property type="string" key="state">docked</property>
-        </ign-gui>
+        </ignition-gui>
     </plugin>
 
     <!-- Entity tree -->
     <plugin filename="EntityTree" name="Entity tree">
-        <ign-gui>
+        <ignition-gui>
             <property type="bool" key="showTitleBar">false</property>
             <property type="string" key="state">docked</property>
-        </ign-gui>
+        </ignition-gui>
     </plugin>
 
         <!-- Image Display -->
     <plugin filename="ImageDisplay" name="Image Display">
-        <ign-gui>
+        <ignition-gui>
             <property type="bool" key="showTitleBar">false</property>
             <property type="string" key="state">docked</property>
-        </ign-gui>
+        </ignition-gui>
         <topic>color_camera/image_raw</topic>
     </plugin>
   </gui>
