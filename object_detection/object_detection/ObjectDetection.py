@@ -10,6 +10,7 @@ from sensor_msgs.msg import Image
 #from vision_msgs.msg import BoundingBox2D
 
 from cv_bridge import CvBridge
+import cv2
 
 
 class ObjectDetection(Node):
@@ -45,6 +46,7 @@ class ObjectDetection(Node):
         # model params
         self.detector_type = self.get_parameter('model_params.detector_type').value
         self.model_dir_path = self.get_parameter('model_params.model_dir_path').value
+        print(self.model_dir_path)
         self.weight_file_name = self.get_parameter('model_params.weight_file_name').value
         self.confidence_threshold = self.get_parameter('model_params.confidence_threshold').value
         self.show_fps = self.get_parameter('model_params.show_fps').value
@@ -94,6 +96,14 @@ class ObjectDetection(Node):
         if predictions == None :
             print("Image input from topic : {} is empty".format(self.input_img_topic))
         else :
+            for prediction in predictions:
+                left, top, width, height = prediction['box']
+                right = left + width
+                bottom = top + height
+
+                #Draw the bounding box
+                cv_image = cv2.rectangle(cv_image,(left,top),(right, bottom),(0,255,0),1)
+
             output = self.bridge.cv2_to_imgmsg(cv_image, "bgr8")
             self.img_pub.publish(output)
             print(predictions)
