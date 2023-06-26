@@ -1,3 +1,9 @@
+#! /usr/bin/env python
+
+from keras_retinanet import models
+from keras_retinanet.utils.image import read_image_bgr, preprocess_image, resize_image
+from keras_retinanet.utils.visualization import draw_box, draw_caption
+from keras_retinanet.utils.colors import label_color
 import matplotlib.pyplot as plt
 import cv2
 import os
@@ -5,14 +11,14 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 
-from keras_retinanet import models
-from keras_retinanet.utils.image import read_image_bgr, preprocess_image, resize_image
-from keras_retinanet.utils.visualization import draw_box, draw_caption
-from keras_retinanet.utils.colors import label_color
+from ..DetectorBase import DetectorBase
 
-class RetinaNet:
-    def __init__(self, model_dir_path, weight_file_name, conf_threshold = 0.7, 
-                 score_threshold = 0.4, nms_threshold = 0.25, is_cuda = 0, show_fps = 1):
+class RetinaNet_plugin(DetectorBase) :
+    def __init(self, model_dir_path, weight_file_name, conf_threshold = 0.7, 
+                 score_threshold = 0.4, nms_threshold = 0.25, is_cuda = 0, show_fps = 1) :
+        super.__init__()
+
+        self.predictions = []
 
         self.model_dir_path = model_dir_path
         self.weight_file_name = weight_file_name
@@ -22,17 +28,7 @@ class RetinaNet:
         self.show_fps = show_fps
         self.is_cuda = is_cuda
 
-        if self.show_fps :
-            self.frame_count = 0
-            self.total_frames = 0
-            self.fps = -1
-            self.start = time.time_ns()
-        
-        self.labels_to_names = self.load_classes()
-        self.build_model()    
-
     def build_model(self) :
-
         try :
             self.model_path = os.path.join(self.model_dir_path, self.weight_file_name)
             self.model = models.load_model(self.model_path, backbone_name='resnet50')
@@ -40,33 +36,20 @@ class RetinaNet:
         except :
             raise Exception("Error loading given model from path: {}. Maybe the file doesn't exist?".format(self.model_path))
 
-
-    def load_classes(self):
+    def load_classes(self) :
         self.class_list = []
         
         with open(self.model_dir_path + "/classes.txt", "r") as f:
             self.class_list = [cname.strip() for cname in f.readlines()]
         
         return self.class_list
-    
-    def create_predictions_list(self, class_ids, confidences, boxes):
-        for i in range(len(class_ids)):
-            obj_dict = {
-                "class_id": class_ids[i],
-                "confidence": confidences[i],
-                "box": boxes[i]
-            }
 
-            self.predictions.append(obj_dict)
-        
-
-    def get_predictions(self, cv_image): 
-
+    def get_predictions(self, cv_image) :
         if cv_image is None:
             # TODO: show warning message (different color, maybe)
             return None,None
 
-        else :                  
+        else :                 
             
             # copy to draw on
             self.frame = cv_image.copy()
@@ -114,6 +97,6 @@ class RetinaNet:
                     cv2.putText(self.frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
     
             return (self.predictions, self.frame)
-                  
-            
-        
+    
+
+

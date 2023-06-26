@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 import cv2
 from ultralytics import YOLO
 import os
