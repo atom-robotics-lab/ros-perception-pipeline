@@ -23,10 +23,8 @@ class YOLOv8(DetectorBase):
       self.frame = None
 
 
-    self.predictions = []
     self.build_model()
     self.load_classes()
-
 
   def build_model(self, model_dir_path, weight_file_name) :
 
@@ -45,17 +43,6 @@ class YOLOv8(DetectorBase):
         self.class_list = [cname.strip() for cname in f.readlines()]
 
     return self.class_list
-
-  # create list of dictionary containing predictions
-  def create_predictions_list(self, class_ids, confidences, boxes):  
-    
-    for i in range(len(class_ids)):
-        obj_dict = {
-            "class_id": class_ids[i],
-            "confidence": confidences[i],
-            "box": boxes[i]
-        }
-        self.predictions.append(obj_dict)
 
   def get_predictions(self, cv_image):
 
@@ -78,7 +65,7 @@ class YOLOv8(DetectorBase):
         class_id.append(box.cls)
         confidence.append(box.conf)
         bb.append(box.xyxy)
-
+        
       self.create_predictions_list(class_id,confidence,bb)
       
     #  output_frame = result[0].plot()                  Frame with bounding boxes

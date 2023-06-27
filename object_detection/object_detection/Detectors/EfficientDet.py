@@ -36,18 +36,6 @@ class EfficientDet:
             self.labels = [cname.strip() for cname in f.readlines()]
         return self.labels
 
-   
-    # create list of dictionary containing predictions
-    def create_predictions_list(self, class_ids, confidences, boxes):
-        for i in range(len(class_ids)):
-            if confidences[i] >= self.conf:
-                obj_dict = {
-                    "class_id": class_ids[i],
-                    "confidence": confidences[i],
-                    "box": boxes[i]
-                }
-                self.predictions.append(obj_dict)
-
     def rescale_box(self,pred_boxes):
         rescaled_boxes = []
 
