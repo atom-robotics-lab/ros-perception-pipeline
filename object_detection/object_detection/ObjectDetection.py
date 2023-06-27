@@ -46,7 +46,6 @@ class ObjectDetection(Node):
         # model params
         self.detector_type = self.get_parameter('model_params.detector_type').value
         self.model_dir_path = self.get_parameter('model_params.model_dir_path').value
-        print(self.model_dir_path)
         self.weight_file_name = self.get_parameter('model_params.weight_file_name').value
         self.confidence_threshold = self.get_parameter('model_params.confidence_threshold').value
         self.show_fps = self.get_parameter('model_params.show_fps').value
