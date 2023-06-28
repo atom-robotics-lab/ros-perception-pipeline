@@ -6,10 +6,12 @@ import time
 from ..DetectorBase import DetectorBase
 
 
-
 class YOLOv8(DetectorBase):
-  def __init__(self, conf_threshold = 0.7, score_threshold = 0.4, nms_threshold = 0.25, show_fps = 1, is_cuda = 0):
-  
+  def __init__(self, conf_threshold = 0.7, score_threshold = 0.4, 
+               nms_threshold = 0.25, show_fps = 1, is_cuda = 0):
+    
+    super().__init__()
+    
     self.conf_threshold = conf_threshold
     self.show_fps = show_fps
     self.is_cuda = is_cuda
