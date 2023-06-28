@@ -16,17 +16,6 @@ class YOLOv8(DetectorBase):
     self.show_fps = show_fps
     self.is_cuda = is_cuda
 
-    #FPS
-    if self.show_fps :
-      self.frame_count = 0
-      self.total_frames = 0
-      self.fps = -1
-      self.start = time.time_ns()
-      self.frame = None
-
-
-    self.build_model()
-    self.load_classes()
 
   def build_model(self, model_dir_path, weight_file_name) :
 
@@ -37,6 +26,7 @@ class YOLOv8(DetectorBase):
     except :
       raise Exception("Error loading given model from path: {}. Maybe the file doesn't exist?".format(model_path))
   
+
   def load_classes(self, model_dir_path):
 
     self.class_list = []
@@ -46,6 +36,7 @@ class YOLOv8(DetectorBase):
 
     return self.class_list
 
+
   def get_predictions(self, cv_image):
 
     if cv_image is None:
@@ -54,8 +45,6 @@ class YOLOv8(DetectorBase):
     
     else :     
       self.frame = cv_image   
-      self.frame_count += 1
-      self.total_frames += 1
 
       class_id = []
       confidence = []
@@ -71,8 +60,6 @@ class YOLOv8(DetectorBase):
       self.create_predictions_list(class_id,confidence,bb)
       
     #  output_frame = result[0].plot()                  Frame with bounding boxes
-
-      print("frame_count : ", self.frame_count)
 
       return self.predictions
   
