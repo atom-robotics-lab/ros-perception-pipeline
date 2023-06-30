@@ -48,8 +48,13 @@ Don't forget to click on the **play** button on the bottom left corner of the Ig
 
 <br>
 
-### 2.Launch the Object Detection node
+### 2. Launch the Object Detection node
 <br>
+
+Use the pip install command as shown below to install the required packages.
+```bash
+pip install -r src/ros-perception-pipeline/object_detection/requirements.txt
+```
 
 Use the command given below to run the ObjectDetection node. Remember to change the path of the object_detection.yaml
 file according to your present working directory
