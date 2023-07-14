@@ -4,21 +4,27 @@ import os
 import time
 
 class YOLOv8:
-  def __init__(self, model_dir_path, weight_file_name, conf_threshold = 0.7, score_threshold = 0.4, nms_threshold = 0.25):
+  def __init__(self, model_dir_path, weight_file_name, conf_threshold = 0.7, 
+               score_threshold = 0.4, nms_threshold = 0.25,
+               show_fps = 1, is_cuda = 0):
     
-    #FPS
-    self.frame_count = 0
-    self.total_frames = 0
-    self.fps = -1
-    self.start = time.time_ns()
-    self.frame = None
-
-
     self.model_dir_path = model_dir_path
     self.weight_file_name = weight_file_name
 
     
     self.conf_threshold = conf_threshold
+    self.show_fps = show_fps
+    self.is_cuda = is_cuda
+
+    #FPS
+    if self.show_fps :
+      self.frame_count = 0
+      self.total_frames = 0
+      self.fps = -1
+      self.start = time.time_ns()
+      self.frame = None
+
+
     self.predictions = []
     self.build_model()
     self.load_classes()
@@ -81,15 +87,17 @@ class YOLOv8:
 
       print("frame_count : ", self.frame_count)
 
-      if self.frame_count >= 30 :
-        self.end = time.time_ns()
-        self.fps = 1000000000 * self.frame_count / (self.end - self.start)
-        self.frame_count = 0
-        self.start = time.time_ns()
 
-      if self.fps > 0:
-        self.fps_label = "FPS: %.2f" % self.fps
-        cv2.putText(output_frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+      if self.show_fps :
+        if self.frame_count >= 30:
+          self.end = time.time_ns()
+          self.fps = 1000000000 * self.frame_count / (self.end - self.start)
+          self.frame_count = 0
+          self.start = time.time_ns()
+
+        if self.fps > 0:
+          self.fps_label = "FPS: %.2f" % self.fps
+          cv2.putText(output_frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
       return self.predictions, output_frame
   

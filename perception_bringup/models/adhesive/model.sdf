@@ -28,9 +28,8 @@
         </geometry>
 	      <material>
           <ambient>0 0.5 0.5 1</ambient>
-          <diffuse>0 0 0 1</diffuse>
-          <specular>0 0 0 1</specular>
-          <emissive>0 0 0 1</emissive>
+          <diffuse>0 0.5 0.5 1</diffuse>
+          <specular>0 0.5 0.5 1</specular>
 	      </material>
       </visual>
 

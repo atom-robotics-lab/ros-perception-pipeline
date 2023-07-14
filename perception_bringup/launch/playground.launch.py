@@ -27,7 +27,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
 
   pkg_perception_bringup = get_package_share_directory("perception_bringup")
-  pkg_ros_gz_sim = get_package_share_directory("ros_gz_sim")
+  #pkg_ros_gz_sim = get_package_share_directory("ros_gz_sim")
 
   world_name = "playground"
 
@@ -37,10 +37,18 @@ def generate_launch_description():
 
   world_sdf = pkg_perception_bringup + "/worlds/" + world_name + ".sdf"
 
-  gz_sim = IncludeLaunchDescription( 
+  '''gz_sim = IncludeLaunchDescription( 
 		PythonLaunchDescriptionSource(
 		    os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
-	)
+	)'''
+
+  gz_sim_share = get_package_share_directory("ros_gz_sim")
+  gz_sim = IncludeLaunchDescription(
+      PythonLaunchDescriptionSource(os.path.join(gz_sim_share, "launch", "gz_sim.launch.py")),
+      launch_arguments={
+          "gz_args" : world_sdf
+      }.items()
+  )
 
   parameter_bridge = Node(package="ros_gz_bridge", executable="parameter_bridge", 
                           parameters = [
