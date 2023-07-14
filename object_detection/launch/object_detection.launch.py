@@ -37,7 +37,8 @@ def generate_launch_description():
         package = 'object_detection',
         name = 'object_detection',
         executable = 'ObjectDetection',
-        parameters = [params]
+        parameters = [params],
+        output="screen"
     )
   
 
