@@ -41,8 +41,8 @@ class RetinaNet(DetectorBase) :
         if cv_image is None:
             # TODO: show warning message (different color, maybe)
             return None
-
-        else :                 
+        
+        else :                
             
             # copy to draw on
             self.frame = cv_image.copy()
