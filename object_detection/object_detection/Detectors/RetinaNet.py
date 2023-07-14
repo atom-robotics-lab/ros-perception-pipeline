@@ -56,7 +56,7 @@ class RetinaNet(DetectorBase) :
             # correct for image scale
             boxes /= scale
     
-            self.create_predictions_list(labels, scores, boxes)
+            super().create_predictions_list(labels, scores, boxes)
       
             return self.predictions
     
