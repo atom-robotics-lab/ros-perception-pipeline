@@ -101,7 +101,7 @@ class ObjectDetection(Node):
                 bottom = top + height
 
                 #Draw the bounding box
-                cv_image = cv2.rectangle(cv_image,(left,top),(right, bottom),(0,255,0),1)
+                cv_image = cv2.rectangle(cv_image,(int(left),int(top)),(int(right), int(bottom)),(0,255,0),1)
 
             output = self.bridge.cv2_to_imgmsg(cv_image, "bgr8")
             self.img_pub.publish(output)
