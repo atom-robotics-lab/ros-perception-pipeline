@@ -30,6 +30,7 @@ class ObjectDetection(Node):
                 ('input_img_topic', ""),
                 ('output_bb_topic', ""),
                 ('output_img_topic', ""),
+                ('publish_output_img', 1),
                 ('model_params.detector_type', ""),
                 ('model_params.model_dir_path', ""),
                 ('model_params.weight_file_name', ""),
@@ -42,6 +43,7 @@ class ObjectDetection(Node):
         self.input_img_topic = self.get_parameter('input_img_topic').value
         self.output_bb_topic = self.get_parameter('output_bb_topic').value
         self.output_img_topic = self.get_parameter('output_img_topic').value
+        self.publish_output_img = self.get_parameter('publish_output_img').value
         
         # model params
         self.detector_type = self.get_parameter('model_params.detector_type').value
@@ -57,8 +59,9 @@ class ObjectDetection(Node):
         else:
             self.load_detector()
     
+        if self.publish_output_img :
+            self.img_pub = self.create_publisher(Image, self.output_img_topic, 10)
         
-        self.img_pub = self.create_publisher(Image, self.output_img_topic, 10)
         self.bb_pub = None
         self.img_sub = self.create_subscription(Image, self.input_img_topic, self.detection_cb, 10)
 
@@ -104,7 +107,9 @@ class ObjectDetection(Node):
                 cv_image = cv2.rectangle(cv_image,(int(left),int(top)),(int(right), int(bottom)),(0,255,0),1)
 
             output = self.bridge.cv2_to_imgmsg(cv_image, "bgr8")
-            self.img_pub.publish(output)
+
+            if self.publish_output_img :
+                self.img_pub.publish(output)
 
 
 def main():
