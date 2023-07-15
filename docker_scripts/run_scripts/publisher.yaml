@@ -1,0 +1,9 @@
+cpp:
+  sample_ros2_pkg_hello_publisher_node:
+    ros__parameters:
+      publish_rate: 5
+
+py:
+  sample_ros2_pkg_hello_publisher_node:
+    ros__parameters:
+      publish_rate: 5
