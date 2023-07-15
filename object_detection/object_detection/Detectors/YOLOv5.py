@@ -146,6 +146,6 @@ class YOLOv5(DetectorBase):
 
             super().create_predictions_list(class_ids, confidences, boxes)
                             
-            print("Detected ids: ", class_ids)         
+            print("Detected ids: ", [self.class_list[id] for id in class_ids])         
             
             return self.predictions

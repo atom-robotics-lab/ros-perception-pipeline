@@ -12,7 +12,7 @@ from ..DetectorBase import DetectorBase
 
 class RetinaNet(DetectorBase) :
     def __init(self, conf_threshold = 0.7, score_threshold = 0.4, 
-                nms_threshold = 0.25, is_cuda = 0, show_fps = 1) :
+                nms_threshold = 0.25, is_cuda = 1, show_fps = 1) :
 
         super.__init__()
 
@@ -23,11 +23,10 @@ class RetinaNet(DetectorBase) :
     def build_model(self, model_dir_path, weight_file_name) :
         model_path = os.path.join(model_dir_path, weight_file_name)
         
-        #try:
-        print(model_path)
-        self.model = models.load_model(model_path, backbone_name='resnet50')
-        #except:
-            #raise Exception("Error loading given model from path: {}. Maybe the file doesn't exist?".format(self.model_path))
+        try:        
+            self.model = models.load_model(model_path, backbone_name='resnet50')
+        except:
+            raise Exception("Error loading given model from path: {}. Maybe the file doesn't exist?".format(self.model_path))
 
     def load_classes(self, model_dir_path) :
         self.class_list = []
@@ -51,13 +50,24 @@ class RetinaNet(DetectorBase) :
             input, scale = resize_image(input)
     
             # process image
-            boxes, scores, labels = self.model.predict_on_batch(np.expand_dims(input, axis=0))
+            boxes_all, confidences_all, class_ids_all = self.model.predict_on_batch(np.expand_dims(input, axis=0))
+
+            boxes, confidences, class_ids = [], [], []
+            
+            for index in range(len(confidences_all[0])) :
+                if confidences_all[0][index]!=-1 :
+                    confidences.append(confidences_all[0][index])
+                    boxes.append(boxes_all[0][index])
+                    class_ids.append(class_ids_all[0][index])
+            
     
             # correct for image scale
-            boxes /= scale
-    
-            super().create_predictions_list(labels[0], scores[0], boxes[0])
-      
+            boxes = [x/scale for x in boxes]
+            
+            super().create_predictions_list(class_ids, confidences, boxes)
+
+            print("Detected ids: ", [self.class_list[id] for id in class_ids])
+            
             return self.predictions
     
 

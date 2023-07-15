@@ -8,6 +8,8 @@ class DetectorBase(ABC):
         self.predictions = []
 
     def create_predictions_list(self, class_ids, confidences, boxes):
+        self.predictions = []
+        
         for i in range(len(class_ids)):
             obj_dict = {
                 "class_id": class_ids[i],

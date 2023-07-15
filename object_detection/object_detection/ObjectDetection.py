@@ -91,7 +91,7 @@ class ObjectDetection(Node):
         cv_image = self.bridge.imgmsg_to_cv2(img_msg, "bgr8")
 
         predictions = self.detector.get_predictions(cv_image=cv_image)
-
+    
         if predictions == None :
             print("Image input from topic : {} is empty".format(self.input_img_topic))
         else :
@@ -105,7 +105,6 @@ class ObjectDetection(Node):
 
             output = self.bridge.cv2_to_imgmsg(cv_image, "bgr8")
             self.img_pub.publish(output)
-            print(predictions)
 
 
 def main():

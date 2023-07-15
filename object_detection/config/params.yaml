@@ -5,7 +5,7 @@ object_detection:
     output_img_topic: object_detection/img
     model_params:
       detector_type: RetinaNet
-      model_dir_path: models/
+      model_dir_path: models/retinanet
       weight_file_name: retinanet.h5
       confidence_threshold : 0.7
       show_fps : 1
