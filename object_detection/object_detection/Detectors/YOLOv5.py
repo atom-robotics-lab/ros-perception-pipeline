@@ -129,9 +129,7 @@ class YOLOv5(DetectorBase):
 
 
     def get_predictions(self, cv_image):
-        #Clear list
-        self.predictions = []
-
+        
         if cv_image is None:
             # TODO: show warning message (different color, maybe)
             return None,None
