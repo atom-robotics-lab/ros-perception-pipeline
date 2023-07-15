@@ -5,7 +5,7 @@ param in the `config/params.yaml` file of the package. Currently the package sup
  * YOLOv5
  * YOLOv8
  * RetinaNET
- * EdgeDET
+ * EfficientDet
 
 The package provides a [`DetectorBase`](https://github.com/atom-robotics-lab/ros-perception-pipeline/blob/detector_plugin_architecture/object_detection/object_detection/DetectorBase.py) class which is an abstract class.
 It uses the python's in-built `abc.ABC` to define the abstract class and `abc.abstractmethod` decorator to define the blueprint for different class methods that the plugin should implement.
