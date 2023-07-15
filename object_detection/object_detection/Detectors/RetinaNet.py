@@ -1,5 +1,6 @@
 import os
 
+from tensorflow import keras
 from keras_retinanet import models
 from keras_retinanet.utils.image import read_image_bgr, preprocess_image, resize_image
 from keras_retinanet.utils.visualization import draw_box, draw_caption
