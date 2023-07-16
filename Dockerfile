@@ -45,16 +45,16 @@ ARG WORKSPACE=/root/percep_ws
 ENV WORKSPACE=$WORKSPACE
 
 # Create folders
-RUN mkdir -p $WORKSPACE/src && \
-cd $WORKSPACE/src && \
-git clone https://github.com/atom-robotics-lab/ros-perception-pipeline.git && \
-git checkout topguns/dockerfile && \
-cd ros-perception-pipeline && \
-rm -rf perception_bringup && \
-cd ~
+RUN mkdir -p $WORKSPACE/src && 
+RUN cd $WORKSPACE/src && 
+RUN git clone https://github.com/atom-robotics-lab/ros-perception-pipeline.git && 
+RUN git checkout topguns/dockerfile && 
+RUN cd ros-perception-pipeline && 
+RUN rm -rf perception_bringup && 
+RUN cd ~
 
-RUN mkdir -p /build_scripts && \
-cp $WORKSPACE/src/ros-perception-pipeline/docker_scripts build_scripts
+RUN mkdir -p /build_scripts && 
+RUN cp $WORKSPACE/src/ros-perception-pipeline/docker_scripts build_scripts
 
 # Another possiblity is to create a metapackage and run rosdep, this saves time in next step
 # Since dependencies are preinstalled and only build is missing
