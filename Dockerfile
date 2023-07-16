@@ -53,8 +53,8 @@ cd ros-perception-pipeline && \
 rm -rf perception_bringup && \
 cd ~
 
-RUN mkdir -p /build_scripts
-COPY $WORKSPACE/src/ros-perception-pipeline/docker_scripts build_scripts
+RUN mkdir -p /build_scripts && \
+cp $WORKSPACE/src/ros-perception-pipeline/docker_scripts build_scripts
 
 # Another possiblity is to create a metapackage and run rosdep, this saves time in next step
 # Since dependencies are preinstalled and only build is missing
