@@ -49,7 +49,8 @@ RUN mkdir -p $WORKSPACE/src
 RUN cd $WORKSPACE/src 
 RUN git clone -b topguns/dockerfile https://github.com/atom-robotics-lab/ros-perception-pipeline.git  
 RUN cd ros-perception-pipeline
-RUN rm -rf perception_bringup  
+RUN rm -rf perception_bringup
+RUN pip install -r $WORKSPACE/src/ros-perception-pipeline/object_detection/requirements.txt  
 RUN cd ~
 
 RUN mkdir -p /build_scripts/ 
@@ -60,7 +61,7 @@ RUN mkdir -p /build_scripts/
 #COPY object_detection $WORKSPACE/src/
 
 # Pip installing requirements
-RUN pip install -r $WORKSPACE/src/ros-perception-pipeline/object_detection/requirements.txt
+
 
 # One time rosdep installs for the meta package
 # @TODO: This can be optimized bby creating metapackage for faster builds
