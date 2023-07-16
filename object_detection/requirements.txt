@@ -1,9 +1,9 @@
+tensorflow==2.12.0
+tensorflow-hub==0.13.0
 keras-retinanet==1.0.0
 matplotlib==3.7.2
 numpy==1.25.0
 opencv-python==4.7.0.72
 pandas==2.0.3
 pillow==9.5.0
-tensorflow==2.12.0
-tensorflow-hub==0.13.0
 ultralytics==8.0.124
