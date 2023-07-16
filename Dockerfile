@@ -45,13 +45,14 @@ ARG WORKSPACE=/root/percep_ws
 ENV WORKSPACE=$WORKSPACE
 
 # Create folders
-RUN mkdir -p $WORKSPACE/src
-RUN cd $WORKSPACE/src 
-RUN git clone -b topguns/dockerfile https://github.com/atom-robotics-lab/ros-perception-pipeline.git  
-RUN cd ros-perception-pipeline
-RUN rm -rf perception_bringup
-RUN pip install -r $WORKSPACE/src/ros-perception-pipeline/object_detection/requirements.txt  
-RUN cd ~
+RUN mkdir -p $WORKSPACE/src && \
+cd $WORKSPACE/src && \
+git clone -b topguns/dockerfile https://github.com/atom-robotics-lab/ros-perception-pipeline.git && \ 
+cd ros-perception-pipeline && \
+rm -rf perception_bringup && \
+cd object_detection && \
+pip install -r requirements.txt  
+
 
 RUN mkdir -p /build_scripts/ 
 #RUN cp $WORKSPACE/src/ros-perception-pipeline/docker_scripts build_scripts
