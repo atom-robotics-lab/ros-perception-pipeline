@@ -46,15 +46,21 @@ ENV WORKSPACE=$WORKSPACE
 
 # Create folders
 RUN mkdir -p $WORKSPACE/src && \
-mkdir -p /build_scripts
-COPY docker_scripts build_scripts
+cd $WORKSPACE/src && \
+git clone git@github.com:atom-robotics-lab/ros-perception-pipeline.git && \
+cd ros-perception-pipeline && \
+rm -rf perception_bringup && \
+cd ~
+
+RUN mkdir -p /build_scripts
+COPY $WORKSPACE/src/ros-perception-pipeline/docker_scripts build_scripts
 
 # Another possiblity is to create a metapackage and run rosdep, this saves time in next step
 # Since dependencies are preinstalled and only build is missing
-COPY object_detection $WORKSPACE/src/
+#COPY object_detection $WORKSPACE/src/
 
 # Pip installing requirements
-RUN pip install -r $WORKSPACE/src/object_detection/requirements.txt
+RUN pip install -r $WORKSPACE/src/ros-perception-pipeline/object_detection/requirements.txt
 
 # One time rosdep installs for the meta package
 # @TODO: This can be optimized bby creating metapackage for faster builds
@@ -64,7 +70,7 @@ RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
     colcon build
 
 # Copy over bash scripts to root directory
-COPY docker_scripts/bash_scripts/ /
+#COPY docker_scripts/bash_scripts/ /
 
 # Use cyclone DDS by default
 ENV RMW_IMPLEMENTATION rmw_cyclonedds_cpp
