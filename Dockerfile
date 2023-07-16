@@ -48,6 +48,7 @@ ENV WORKSPACE=$WORKSPACE
 RUN mkdir -p $WORKSPACE/src && \
 cd $WORKSPACE/src && \
 git clone git@github.com:atom-robotics-lab/ros-perception-pipeline.git && \
+git checkout topguns/dockerfile && \
 cd ros-perception-pipeline && \
 rm -rf perception_bringup && \
 cd ~
