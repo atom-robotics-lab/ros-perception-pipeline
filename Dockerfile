@@ -47,9 +47,8 @@ ENV WORKSPACE=$WORKSPACE
 # Create folders
 RUN mkdir -p $WORKSPACE/src
 RUN cd $WORKSPACE/src 
-RUN git clone https://github.com/atom-robotics-lab/ros-perception-pipeline.git  
-RUN cd ros-perception-pipeline 
-RUN git checkout topguns/dockerfile 
+RUN git clone -b topguns/dockerfile https://github.com/atom-robotics-lab/ros-perception-pipeline.git  
+RUN cd ros-perception-pipeline
 RUN rm -rf perception_bringup  
 RUN cd ~
 
