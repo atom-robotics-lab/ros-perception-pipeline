@@ -71,7 +71,7 @@ COPY docker_scripts build_scripts
 RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
     cd $WORKSPACE && \
     rosdep install --from-paths src --ignore-src -r -y && \
-    colcon build
+    colcon build --symlink-install
 
 # Copy over bash scripts to root directory
 #COPY docker_scripts/bash_scripts/ /
@@ -97,6 +97,9 @@ ENV ROS_DISTRO=$ROS_DISTRO
 
 # Install xacro 
 #RUN apt-get install ros-humble-xacro
+
+# Install cv-bridge
+RUN apt install ros-humble-cv-bridge
 
 
 # Update .bashrc

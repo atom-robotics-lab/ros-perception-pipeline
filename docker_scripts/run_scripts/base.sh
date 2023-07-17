@@ -5,8 +5,9 @@ xhost +local:root
 
 ./stop.sh
 
-docker run -t -d --privileged --net=host \
+docker run -t -d -P --privileged=true \
 --name object_detection \
+--net=host \
 -v /home/mediapipe/Desktop/ros_workspaces/percep_ws/models:/root/percep_ws/models \
 -v $PWD/ddsconfig.xml:/ddsconfig.xml \
 -v $PWD/publisher.yaml:/root/percep_ws/install/object_detection/share/object_detection/config/publisher.yaml \
