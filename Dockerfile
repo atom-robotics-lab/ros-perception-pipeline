@@ -53,9 +53,11 @@ rm -rf perception_bringup && \
 cd object_detection && \
 pip install -r requirements.txt  
 
+RUN mkdir -p $WORKSPACE/models
 
-#RUN mkdir -p /build_scripts/ 
-#RUN cp $WORKSPACE/src/ros-perception-pipeline/docker_scripts build_scripts
+
+RUN mkdir -p /build_scripts/ 
+COPY docker_scripts build_scripts
 
 # Another possiblity is to create a metapackage and run rosdep, this saves time in next step
 # Since dependencies are preinstalled and only build is missing

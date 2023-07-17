@@ -7,6 +7,7 @@ xhost +local:root
 
 docker run -t -d --privileged --net=host \
 --name object_detection \
+-v /home/mediapipe/Desktop/ros_workspaces/percep_ws/models:/root/percep_ws/models \
 -v $PWD/ddsconfig.xml:/ddsconfig.xml \
 -v $PWD/publisher.yaml:/root/percep_ws/install/object_detection/share/object_detection/config/publisher.yaml \
 --env CYCLONEDDS_URI=/ddsconfig.xml \
