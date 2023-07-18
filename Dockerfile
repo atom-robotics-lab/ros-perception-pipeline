@@ -99,7 +99,7 @@ ENV ROS_DISTRO=$ROS_DISTRO
 #RUN apt-get install ros-humble-xacro
 
 # Install cv-bridge
-RUN apt install ros-humble-cv-bridge
+RUN apt install -y ros-humble-cv-bridge
 
 
 # Update .bashrc
