@@ -7,7 +7,7 @@ from ..DetectorBase import DetectorBase
 
 
 class YOLOv5(DetectorBase):
-    def __init__(self, conf_threshold = 0.7, score_threshold = 0.4, nms_threshold = 0.25, is_cuda = 0):
+    def __init__(self, conf_threshold = 0.7, is_cuda = 1):
 
         super().__init__()
 
@@ -144,6 +144,4 @@ class YOLOv5(DetectorBase):
 
             super().create_predictions_list(class_ids, confidences, boxes)
                             
-            print("Detected ids: ", [self.class_list[id] for id in class_ids])         
-            
             return self.predictions

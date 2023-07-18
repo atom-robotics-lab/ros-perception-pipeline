@@ -5,8 +5,8 @@ object_detection:
     output_img_topic: object_detection/img
     publish_output_img: 1
     model_params:
-      detector_type: RetinaNet
-      model_dir_path: models/retinanet
-      weight_file_name: retinanet.h5
+      detector_type: YOLOv5
+      model_dir_path: models
+      weight_file_name: auto_final.onnx
       confidence_threshold : 0.7
       show_fps : 1

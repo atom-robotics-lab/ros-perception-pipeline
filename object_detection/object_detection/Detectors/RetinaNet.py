@@ -12,14 +12,9 @@ from ..DetectorBase import DetectorBase
 
 
 class RetinaNet(DetectorBase) :
-    def __init(self, conf_threshold = 0.7, score_threshold = 0.4, 
-                nms_threshold = 0.25, is_cuda = 1, show_fps = 1) :
+    def __init(self) :
 
         super.__init__()
-
-        self.conf_threshold = conf_threshold
-        self.show_fps = show_fps
-        self.is_cuda = is_cuda
 
     def build_model(self, model_dir_path, weight_file_name) :
         model_path = os.path.join(model_dir_path, weight_file_name)
@@ -27,7 +22,7 @@ class RetinaNet(DetectorBase) :
         try:        
             self.model = models.load_model(model_path, backbone_name='resnet50')
         except:
-            raise Exception("Error loading given model from path: {}. Maybe the file doesn't exist?".format(self.model_path))
+            raise Exception("Error loading given model from path: {}. Maybe the file doesn't exist?".format(model_path))
 
     def load_classes(self, model_dir_path) :
         self.class_list = []
@@ -66,8 +61,6 @@ class RetinaNet(DetectorBase) :
             boxes = [x/scale for x in boxes]
             
             super().create_predictions_list(class_ids, confidences, boxes)
-
-            print("Detected ids: ", [self.class_list[id] for id in class_ids])
             
             return self.predictions
     
