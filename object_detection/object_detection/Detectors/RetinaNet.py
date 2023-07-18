@@ -58,7 +58,8 @@ class RetinaNet(DetectorBase) :
             
     
             # correct for image scale
-            boxes = [x/scale for x in boxes]
+            #boxes = [x/scale for x in boxes]
+            boxes = [[int(coord/scale) for coord in box] for box in boxes]
             
             super().create_predictions_list(class_ids, confidences, boxes)
             
