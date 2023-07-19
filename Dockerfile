@@ -104,4 +104,5 @@ RUN apt install -y ros-humble-cv-bridge
 
 # Update .bashrc
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /root/.bashrc && \
-    echo "source $WORKSPACE/install/setup.bash" >> /root/.bashrc
+    echo "source $WORKSPACE/install/setup.bash" >> /root/.bashrc \
+
