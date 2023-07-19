@@ -44,7 +44,7 @@ ARG WORKSPACE=/root/percep_ws
 # Add target workspace in environment
 ENV WORKSPACE=$WORKSPACE
 
-# Create folders
+# Create folders and setting up the project
 RUN mkdir -p $WORKSPACE/src && \
 cd $WORKSPACE/src && \
 git clone -b topguns/dockerfile https://github.com/atom-robotics-lab/ros-perception-pipeline.git && \ 
@@ -53,15 +53,16 @@ rm -rf perception_bringup && \
 cd object_detection && \
 pip install -r requirements.txt  
 
+# Creating the models folder
 RUN mkdir -p $WORKSPACE/models
 
 
-RUN mkdir -p /build_scripts/ 
-COPY docker_scripts build_scripts
+RUN mkdir -p /build_scripts/ && \
+cp $WORKSPACE/src/ros-perception-pipeline/docker_scripts /build_scripts && \
+cp $WORKSPACE/src/ros-perception-pipeline/docker_scripts/bash_scripts/ /
 
 # Another possiblity is to create a metapackage and run rosdep, this saves time in next step
 # Since dependencies are preinstalled and only build is missing
-#COPY object_detection $WORKSPACE/src/
 
 # Pip installing requirements
 
@@ -104,5 +105,5 @@ RUN apt install -y ros-humble-cv-bridge
 
 # Update .bashrc
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /root/.bashrc && \
-    echo "source $WORKSPACE/install/setup.bash" >> /root/.bashrc \
+    echo "source $WORKSPACE/install/setup.bash" >> /root/.bashrc 
 
