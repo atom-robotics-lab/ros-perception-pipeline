@@ -53,7 +53,7 @@ class YOLOv8(DetectorBase):
         confidence.append(box.conf.numpy().tolist())
         boxes.append(box.xyxy.numpy().tolist())
         
-      self.create_predictions_list(class_id,confidence,boxes)
+      super().create_predictions_list(class_id,confidence,boxes)
       
 
       return self.predictions
