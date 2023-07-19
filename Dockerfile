@@ -4,7 +4,6 @@ ARG ROS_DISTRO=humble
 FROM ros:$ROS_DISTRO-ros-base
 
 # Prevent console from interacting with the user
-# Read more here - https://bobcares.com/blog/debian_frontendnoninteractive-docker
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Prevent hash mismatch error for apt-get update, qqq makes the terminal quiet while downloading pkgs
@@ -14,10 +13,6 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* && apt-get update -yqqq
 RUN mkdir tmp/runtime-root && chmod 0700 tmp/runtime-root
 ENV XDG_RUNTIME_DIR='/tmp/runtime-root'
 
-# https://stackoverflow.com/questions/51023312/docker-having-issues-installing-apt-utils
-
-# Non Python/ROS Dependencies
-# apt-utils: https://stackoverflow.com/questions/51023312/docker-having-issues-installing-apt-utils
 
 RUN apt-get update
 
@@ -57,47 +52,21 @@ pip install -r requirements.txt
 RUN mkdir -p $WORKSPACE/models
 
 
-RUN mkdir -p /build_scripts/ && \
-cp $WORKSPACE/src/ros-perception-pipeline/docker_scripts /build_scripts && \
-cp $WORKSPACE/src/ros-perception-pipeline/docker_scripts/bash_scripts/ /
-
-# Another possiblity is to create a metapackage and run rosdep, this saves time in next step
-# Since dependencies are preinstalled and only build is missing
-
-# Pip installing requirements
+RUN mkdir -p /build_scripts/ 
+RUN cp -r $WORKSPACE/src/ros-perception-pipeline/docker_scripts/bash_scripts/launch_controller.sh /
 
 
 # One time rosdep installs for the meta package
-# @TODO: This can be optimized bby creating metapackage for faster builds
 RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
     cd $WORKSPACE && \
     rosdep install --from-paths src --ignore-src -r -y && \
     colcon build --symlink-install
-
-# Copy over bash scripts to root directory
-#COPY docker_scripts/bash_scripts/ /
 
 # Use cyclone DDS by default
 ENV RMW_IMPLEMENTATION rmw_cyclonedds_cpp
 
 # For .bashrc
 ENV ROS_DISTRO=$ROS_DISTRO
-
-# Gazebo Fortress
-#RUN apt-get install --no-install-recommends -yqqq \
-    #ros-$ROS_DISTRO-ros-gz-sim \
-    #ros-$ROS_DISTRO-ros-gz-interfaces \
-    #ros-$ROS_DISTRO-ros-gz-bridge
-
-
-# Install ros_gz
-#RUN apt install -y ros-humble-ros-ign
-
-# Install Rviz2
-#RUN apt install -y ros-humble-rviz2
-
-# Install xacro 
-#RUN apt-get install ros-humble-xacro
 
 # Install cv-bridge
 RUN apt install -y ros-humble-cv-bridge
