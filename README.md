@@ -262,13 +262,13 @@ Our Socials - [Linktree](https://linktr.ee/atomlabs) - atom@inventati.org
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/atom-robotics-lab/MR-Robot.svg?style=for-the-badge
-[contributors-url]: https://github.com/atom-robotics-lab/MR-Robot/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/atom-robotics-lab/MR-Robot.svg?style=for-the-badge
-[forks-url]: https://github.com/atom-robotics-lab/wiki/network/members
-[stars-shield]: https://img.shields.io/github/stars/atom-robotics-lab/MR-Robot.svg?style=for-the-badge
-[stars-url]: https://github.com/atom-robotics-lab/wiki/stargazers
-[issues-shield]: https://img.shields.io/github/issues/atom-robotics-lab/MR-Robot.svg?style=for-the-badge
-[issues-url]: https://github.com/atom-robotics-lab/MR-Robot/issues
+[contributors-shield]: https://img.shields.io/github/contributors/atom-robotics-lab/ros-perception-pipeline.svg?style=for-the-badge
+[contributors-url]: https://github.com/atom-robotics-lab/ros-perception-pipeline/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/atom-robotics-lab/ros-perception-pipeline.svg?style=for-the-badge
+[forks-url]: https://github.com/atom-robotics-lab/ros-perception-pipeline/network/members
+[stars-shield]: https://img.shields.io/github/stars/atom-robotics-lab/ros-perception-pipeline.svg?style=for-the-badge
+[stars-url]: https://github.com/atom-robotics-lab/ros-perception-pipeline/stargazers
+[issues-shield]: https://img.shields.io/github/issues/atom-robotics-lab/ros-perception-pipeline.svg?style=for-the-badge
+[issues-url]: https://github.com/atom-robotics-lab/ros-perception-pipeline/issues
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/company/a-t-o-m-robotics-lab/
