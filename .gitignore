@@ -5,3 +5,5 @@
 object_detection/object_detection/Detectors/__pycache__/
 object_detection/object_detection/__pycache__/
 
+#Ignore .vscode dir
+.vscode
