@@ -45,7 +45,7 @@ class YOLOv8(DetectorBase):
       class_id = []
       confidence = []
       boxes = []
-      result = self.model.predict(self.frame, conf = self.conf_threshold) # Perform object detection on image
+      result = self.model.predict(self.frame, conf = self.conf_threshold, verbose = False) # Perform object detection on image
       row = result[0].boxes
 
       for box in row:
