@@ -26,6 +26,7 @@ setup(
     entry_points={
         'console_scripts': [
             'ObjectDetection = object_detection.ObjectDetection:main',
+            'RetinaNet_test = object_detection.RetinaNet_test:main'
         ],
     },
 )

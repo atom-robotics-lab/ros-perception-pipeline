@@ -6,7 +6,7 @@ object_detection:
     publish_output_img: 1
     model_params:
       detector_type: RetinaNet
-      model_dir_path: models/retinanet
-      weight_file_name: retinanet.h5
+      model_dir_path: /home/noemoji041/ros2_workspaces/percepros2_ws/src/ros-perception-pipeline/object_detection/models
+      weight_file_name: resnet50_coco_best_v2.1.0.h5
       confidence_threshold : 0.7
       show_fps : 1

@@ -5,6 +5,7 @@ import importlib
 
 import rclpy
 from rclpy.node import Node
+import time
 
 from sensor_msgs.msg import Image
 #from vision_msgs.msg import BoundingBox2D
@@ -91,7 +92,9 @@ class ObjectDetection(Node):
     
     
     def detection_cb(self, img_msg):
-        cv_image = self.bridge.imgmsg_to_cv2(img_msg, "bgr8")
+
+        start = time.time()
+        cv_image = self.bridge.imgmsg_to_cv2(img_msg, "bgr8")        
 
         predictions = self.detector.get_predictions(cv_image=cv_image)
     
@@ -105,7 +108,14 @@ class ObjectDetection(Node):
 
                 #Draw the bounding box
                 cv_image = cv2.rectangle(cv_image,(left,top),(right, bottom),(0,255,0),1)
+            
+            end = time.time()
 
+            fps = 1/(end-start)
+            cv_image = cv2.putText(cv_image, str(fps), (00, 185),cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+
+            cv2.imshow("FPS", cv_image)
+            cv2.waitKey(1)
             output = self.bridge.cv2_to_imgmsg(cv_image, "bgr8")
 
             if self.publish_output_img :
