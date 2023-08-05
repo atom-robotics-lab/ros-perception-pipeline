@@ -7,17 +7,20 @@ from ..DetectorBase import DetectorBase
 
 
 class YOLOv8(DetectorBase):
-  def __init__(self, conf_threshold = 0.7):
+  def __init__(self, conf_threshold = 0.7, is_cuda = 1):
     
     super().__init__()
     
     self.conf_threshold = conf_threshold
+    self.is_cuda = is_cuda
 
   def build_model(self, model_dir_path, weight_file_name) :
 
     try :
       model_path = os.path.join(model_dir_path, weight_file_name)
-      self.model = YOLO(model_path)
+      if self.is_cuda:
+      	self.model = YOLO(model_path)
+      	self.model.to('cuda')
     
     except :
       raise Exception("Error loading given model from path: {}. Maybe the file doesn't exist?".format(model_path))

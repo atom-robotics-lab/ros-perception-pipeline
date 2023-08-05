@@ -38,6 +38,7 @@ def generate_launch_description():
         name = 'object_detection',
         executable = 'ObjectDetection',
         parameters = [params],
+        emulate_tty = True,
         output="screen"
     )
   
