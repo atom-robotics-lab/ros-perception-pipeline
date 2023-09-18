@@ -1,11 +1,7 @@
 import os
 
-from tensorflow import keras
 from keras_retinanet import models
-from keras_retinanet.utils.image import read_image_bgr, preprocess_image, resize_image
-from keras_retinanet.utils.visualization import draw_box, draw_caption
-from keras_retinanet.utils.colors import label_color
-import cv2
+from keras_retinanet.utils.image import preprocess_image, resize_image
 import numpy as np
 
 from ..DetectorBase import DetectorBase
