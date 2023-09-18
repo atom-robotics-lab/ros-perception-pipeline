@@ -126,8 +126,7 @@ Refer to the official [ROS 2 installation guide](https://docs.ros.org/en/humble/
     Now go ahead and clone this repository inside the "src" folder of the workspace you just created.
 
       ```bash
-      cd percep_ws/src    
-      git clone git@github.com:atom-robotics-lab/ros-perception-pipeline.git
+      cd percep_ws && git clone git@github.com:atom-robotics-lab/ros-perception-pipeline.git src/
       ```
 3. Install dependencies using rosdep
 
