@@ -129,8 +129,20 @@ Refer to the official [ROS 2 installation guide](https://docs.ros.org/en/humble/
       cd percep_ws/src    
       git clone git@github.com:atom-robotics-lab/ros-perception-pipeline.git
       ```
+3. Install dependencies using rosdep
 
-3. Compile the package
+    Update Your rosdep before installation.
+
+    ```bash
+    rosdep update
+    ```
+      
+    This command installs all the packages that the packages in your catkin workspace depend upon but are missing on your computer.
+    ```bash
+    rosdep install --from-paths src --ignore-src -r -y
+    ```
+
+4. Compile the package
 
     Follow this execution to compile your ROS 2 package
   
@@ -138,7 +150,8 @@ Refer to the official [ROS 2 installation guide](https://docs.ros.org/en/humble/
       colcon build --symlink-install
       ```
 
-4. Source your workspace
+5. Source your workspace
+     
       ```bash
       source install/local_setup.bash
       ```
