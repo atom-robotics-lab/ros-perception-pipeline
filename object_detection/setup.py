@@ -16,7 +16,7 @@ setup(
         (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
 
     ],
-    install_requires=['setuptools'],
+    install_requires=['setuptools', 'vision_msgs'],
     zip_safe=True,
     maintainer='singh',
     maintainer_email='jasmeet0915@gmail.com',

@@ -7,8 +7,7 @@ import rclpy
 from rclpy.node import Node
 
 from sensor_msgs.msg import Image
-#from vision_msgs.msg import BoundingBox2D
-
+from vision_msgs.msg import Detection2D, Detection2DArray, ObjectHypothesisWithPose, Pose2D, Point2D, ObjectHypothesis
 from cv_bridge import CvBridge
 import cv2
 
@@ -30,6 +29,7 @@ class ObjectDetection(Node):
                 ('input_img_topic', ""),
                 ('output_bb_topic', ""),
                 ('output_img_topic', ""),
+                ('output_vision_topic', ""),
                 ('model_params.detector_type', ""),
                 ('model_params.model_dir_path', ""),
                 ('model_params.weight_file_name', ""),
@@ -42,6 +42,7 @@ class ObjectDetection(Node):
         self.input_img_topic = self.get_parameter('input_img_topic').value
         self.output_bb_topic = self.get_parameter('output_bb_topic').value
         self.output_img_topic = self.get_parameter('output_img_topic').value
+        self.output_vision_topic = self.get_parameter('output_vision_topic').value
         
         # model params
         self.detector_type = self.get_parameter('model_params.detector_type').value
@@ -50,6 +51,9 @@ class ObjectDetection(Node):
         self.confidence_threshold = self.get_parameter('model_params.confidence_threshold').value
         self.show_fps = self.get_parameter('model_params.show_fps').value
         
+        print(f"Model dir: {self.model_dir_path}")
+        print(f"Model: {self.weight_file_name}")
+
         # raise an exception if specified detector was not found
         if self.detector_type not in self.available_detectors:
             raise ModuleNotFoundError(self.detector_type + " Detector specified in config was not found. " + 
@@ -61,6 +65,8 @@ class ObjectDetection(Node):
         self.img_pub = self.create_publisher(Image, self.output_img_topic, 10)
         self.bb_pub = None
         self.img_sub = self.create_subscription(Image, self.input_img_topic, self.detection_cb, 10)
+
+        self.vision_msg_pub = self.create_publisher(Detection2DArray, self.output_vision_topic, 10)
 
         self.bridge = CvBridge()
 
@@ -91,6 +97,9 @@ class ObjectDetection(Node):
         cv_image = self.bridge.imgmsg_to_cv2(img_msg, "bgr8")
 
         predictions = self.detector.get_predictions(cv_image=cv_image)
+        
+
+        detection_arr = Detection2DArray()        
 
         if predictions == None :
             print("Image input from topic : {} is empty".format(self.input_img_topic))
@@ -100,12 +109,39 @@ class ObjectDetection(Node):
                 right = left + width
                 bottom = top + height
 
+                class_id = str(prediction['class_id'])
+                conf = float(prediction['confidence'])
+
+                detection_msg = Detection2D()
+                detection_msg.bbox.size_x = float(width)
+                detection_msg.bbox.size_y = float(height)
+                
+                position_msg = Point2D()
+                position_msg.x = float((left + right) / 2)
+                position_msg.y = float((bottom + top) / 2)
+                
+                center_msg = Pose2D()
+                center_msg.position = position_msg
+
+                detection_msg.bbox.center = center_msg
+
+                results_msg = ObjectHypothesisWithPose()
+                hypothesis_msg = ObjectHypothesis()
+                hypothesis_msg.class_id = class_id
+                hypothesis_msg.score = conf
+
+                results_msg.hypothesis = hypothesis_msg
+                detection_msg.results.append(results_msg)
+                
+                detection_arr.detections.append(detection_msg)
+                
+
                 #Draw the bounding box
                 cv_image = cv2.rectangle(cv_image,(left,top),(right, bottom),(0,255,0),1)
 
             output = self.bridge.cv2_to_imgmsg(cv_image, "bgr8")
             self.img_pub.publish(output)
-            print(predictions)
+            self.vision_msg_pub.publish(detection_arr)
 
 
 def main():
