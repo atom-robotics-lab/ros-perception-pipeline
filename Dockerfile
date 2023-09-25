@@ -1,7 +1,5 @@
-ARG ROS_DISTRO=humble
-
-# Use base image, https://hub.docker.com/_/ros/
-FROM ros:$ROS_DISTRO-ros-base
+# Use the NVIDIA CUDA base image as the base image
+FROM nvcr.io/nvidia/cuda:12.2.0-devel-ubuntu22.04
 
 # Prevent console from interacting with the user
 ARG DEBIAN_FRONTEND=noninteractive
@@ -13,25 +11,41 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* && apt-get update -yqqq
 RUN mkdir tmp/runtime-root && chmod 0700 tmp/runtime-root
 ENV XDG_RUNTIME_DIR='/tmp/runtime-root'
 
-
 RUN apt-get update
 
 RUN apt-get install --no-install-recommends -yqqq \
     apt-utils \
-    vim \
     git
+
+# Using shell to use bash commands like 'source'
+SHELL ["/bin/bash", "-c"]
 
 # Python Dependencies
 RUN apt-get install --no-install-recommends -yqqq \
     python3-pip
 
-# Addtional DDS dependencies
-RUN apt-get install --no-install-recommends -yqqq \
-    ros-$ROS_DISTRO-cyclonedds \
-    ros-$ROS_DISTRO-rmw-cyclonedds-cpp
+# Install ROS 2 Humble
 
-# Using shell to use bash commands like 'source'
-SHELL ["/bin/bash", "-c"]
+# Add locale
+RUN locale  && \
+    apt update && apt install locales  -y && \
+    locale-gen en_US en_US.UTF-8 && \
+    update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 && \
+    export LANG=en_US.UTF-8 && \
+    locale 
+
+# Setup the sources
+RUN apt-get update && apt-get install -y software-properties-common curl && \
+    add-apt-repository universe && \
+    curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/nul
+
+RUN apt update && apt install -y && \
+    apt install ros-humble-desktop -y && \
+    apt install ros-dev-tools -y
+
+# Install cv-bridge
+RUN apt install -y ros-humble-cv-bridge
 
 # Target workspace for ROS2 packages
 ARG WORKSPACE=/root/percep_ws
@@ -39,40 +53,22 @@ ARG WORKSPACE=/root/percep_ws
 # Add target workspace in environment
 ENV WORKSPACE=$WORKSPACE
 
-# Create folders and setting up the project
-RUN mkdir -p $WORKSPACE/src && \
-cd $WORKSPACE/src && \
-git clone -b topguns/dockerfile https://github.com/atom-robotics-lab/ros-perception-pipeline.git && \ 
-cd ros-perception-pipeline && \
-rm -rf perception_bringup && \
-cd object_detection && \
-pip install -r requirements.txt  
-
 # Creating the models folder
 RUN mkdir -p $WORKSPACE/models
 
+# Create folders and setting up the project
+COPY object_detection/requirements.txt /requirements.txt
+RUN  pip3 install -r requirements.txt
 
-RUN mkdir -p /build_scripts/ 
-RUN cp -r $WORKSPACE/src/ros-perception-pipeline/docker_scripts/bash_scripts/launch_controller.sh /
-
-
-# One time rosdep installs for the meta package
-RUN source /opt/ros/$ROS_DISTRO/setup.bash && \
-    cd $WORKSPACE && \
-    rosdep install --from-paths src --ignore-src -r -y && \
-    colcon build --symlink-install
+# ROS Dependencies
+RUN apt-get install --no-install-recommends -y \
+    ros-humble-cyclonedds \
+    ros-humble-rmw-cyclonedds-cpp
 
 # Use cyclone DDS by default
 ENV RMW_IMPLEMENTATION rmw_cyclonedds_cpp
 
-# For .bashrc
-ENV ROS_DISTRO=$ROS_DISTRO
-
-# Install cv-bridge
-RUN apt install -y ros-humble-cv-bridge
-
-
 # Update .bashrc
-RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /root/.bashrc && \
+RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc && \
     echo "source $WORKSPACE/install/setup.bash" >> /root/.bashrc 
 

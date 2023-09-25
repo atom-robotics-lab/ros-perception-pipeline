@@ -5,12 +5,12 @@ xhost +local:root
 
 ./stop.sh
 
-docker run -t -d --privileged --net=host \
+docker run -t -d --privileged --net=host --ipc=host \
 --name object_detection \
--v $PWD/../../workspace/:/root/percep_ws/src/ \
+-v $PWD/../../../../../percep_ws/src:/root/percep_ws/src \
+-v $PWD/../../../models/:/root/percep_ws/models/ \
 -v $PWD/ddsconfig.xml:/ddsconfig.xml \
 --env CYCLONEDDS_URI=/ddsconfig.xml \
---env ROS_DOMAIN_ID=11 \
 --env="QT_X11_NO_MITSHM=1"  \
 --env="DISPLAY"  \
-simple_amr_sim:latest
+object_detection:latest
