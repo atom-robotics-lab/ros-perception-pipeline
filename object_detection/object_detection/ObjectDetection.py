@@ -105,7 +105,6 @@ class ObjectDetection(Node):
 
             output = self.bridge.cv2_to_imgmsg(cv_image, "bgr8")
             self.img_pub.publish(output)
-            print(predictions)
 
 
 def main():
