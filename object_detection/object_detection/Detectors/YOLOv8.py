@@ -4,13 +4,8 @@ import os
 import time
 
 class YOLOv8:
-  def __init__(self, model_dir_path, weight_file_name, conf_threshold = 0.7, 
-               score_threshold = 0.4, nms_threshold = 0.25,
-               show_fps = 1, is_cuda = 0):
-    
-    self.model_dir_path = model_dir_path
-    self.weight_file_name = weight_file_name
-
+  def __init__(self, conf_threshold = 0.7, score_threshold = 0.4, nms_threshold = 0.25,
+               show_fps = 1, is_cuda = 1):
     
     self.conf_threshold = conf_threshold
     self.show_fps = show_fps
@@ -24,26 +19,22 @@ class YOLOv8:
       self.start = time.time_ns()
       self.frame = None
 
-
     self.predictions = []
-    self.build_model()
-    self.load_classes()
 
-
-  def build_model(self) :
+  def build_model(self, model_dir_path, weight_file_name) :
 
     try :
-      model_path = os.path.join(self.model_dir_path, self.weight_file_name)
+      model_path = os.path.join(model_dir_path, weight_file_name)
       self.model = YOLO(model_path)
     
     except :
       raise Exception("Error loading given model from path: {}. Maybe the file doesn't exist?".format(model_path))
   
-  def load_classes(self):
+  def load_classes(self, model_dir_path):
 
     self.class_list = []
 
-    with open(self.model_dir_path + "/classes.txt", "r") as f:
+    with open(model_dir_path + "/classes.txt", "r") as f:
         self.class_list = [cname.strip() for cname in f.readlines()]
 
     return self.class_list
