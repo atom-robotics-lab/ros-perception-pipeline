@@ -15,6 +15,7 @@ RUN apt-get update
 
 RUN apt-get install --no-install-recommends -yqqq \
     apt-utils \
+    nano \
     git
 
 # Using shell to use bash commands like 'source'
