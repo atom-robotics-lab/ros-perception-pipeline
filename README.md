@@ -126,11 +126,22 @@ Refer to the official [ROS 2 installation guide](https://docs.ros.org/en/humble/
     Now go ahead and clone this repository inside the "src" folder of the workspace you just created.
 
       ```bash
-      cd percep_ws/src    
-      git clone git@github.com:atom-robotics-lab/ros-perception-pipeline.git
+      cd percep_ws && git clone git@github.com:atom-robotics-lab/ros-perception-pipeline.git src/
       ```
+3. Install dependencies using rosdep
 
-3. Compile the package
+    Update Your rosdep before installation.
+
+    ```bash
+    rosdep update
+    ```
+      
+    This command installs all the packages that the packages in your catkin workspace depend upon but are missing on your computer.
+    ```bash
+    rosdep install --from-paths src --ignore-src -r -y
+    ```
+
+4. Compile the package
 
     Follow this execution to compile your ROS 2 package
   
@@ -138,7 +149,8 @@ Refer to the official [ROS 2 installation guide](https://docs.ros.org/en/humble/
       colcon build --symlink-install
       ```
 
-4. Source your workspace
+5. Source your workspace
+     
       ```bash
       source install/local_setup.bash
       ```
@@ -181,7 +193,24 @@ file according to your present working directory
 ros2 run object_detection ObjectDetection --ros-args --params-file src/ros-perception-pipeline/object_detection/config/object_detection.yaml
 ```
 
+**Note :** If your imports are not working while using a virtual environment, you'll need to manually set your `PYTHONPATH` environment variable.
+Follow these steps to do this :
+
+1. Activate your virtual environment
+
+2. Find out the path of your virtual environment's Python installation
+    ```bash
+    which Python
+    ```
+
+3. Set your `PYTHONPATH`
+    ```bash
+    export PYTHONPATH = {insert_your_python_path_here}
+    ```
+
+
 ### 3. Changing the Detector
+
 
 To change the object detector being used, you can change the parameters inside the object_detection.yaml file location inside 
 the **config** folder. 
