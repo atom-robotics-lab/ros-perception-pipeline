@@ -54,7 +54,8 @@ ARG WORKSPACE=/root/percep_ws
 ENV WORKSPACE=$WORKSPACE
 
 # Creating the models folder
-RUN mkdir -p $WORKSPACE/models
+RUN mkdir -p $WORKSPACE/models && \
+    mkdir -p $WORKSPACE/src
 
 # Create folders and setting up the project
 COPY object_detection/requirements.txt /requirements.txt
@@ -69,6 +70,5 @@ RUN apt-get install --no-install-recommends -y \
 ENV RMW_IMPLEMENTATION rmw_cyclonedds_cpp
 
 # Update .bashrc
-RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc && \
-    echo "source $WORKSPACE/install/setup.bash" >> /root/.bashrc 
+RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
 

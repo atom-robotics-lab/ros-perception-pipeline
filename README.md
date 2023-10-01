@@ -105,9 +105,14 @@ Follow these steps to setup this project on your systm
 
 ### Prerequisites
 
-Follow these steps to install ROS Humble
+Follow these steps to install ROS Humble and OpenCV
 * ROS Humble
 Refer to the official [ROS 2 installation guide](https://docs.ros.org/en/humble/Installation.html)
+
+* OpenCV
+  ```bash
+  pip install opencv-contrib-python
+  ```
 
 ### Installation
 
@@ -117,6 +122,8 @@ Refer to the official [ROS 2 installation guide](https://docs.ros.org/en/humble/
     ```
 
 2. Clone the ROS-Perception-Pipeline repository
+
+    Now go ahead and clone this repository inside the "src" folder of the workspace you just created.
 
       ```bash
       cd percep_ws && git clone git@github.com:atom-robotics-lab/ros-perception-pipeline.git src/
@@ -146,11 +153,6 @@ Refer to the official [ROS 2 installation guide](https://docs.ros.org/en/humble/
      
       ```bash
       source install/local_setup.bash
-      ```
-
-5. Install Python dependencies
-      ```bash
-      pip install -r object_detection/requirements.txt
       ```
 
 
@@ -236,12 +238,18 @@ ros2 run rqt_image_view rqt_image_view
       ```bash
       docker build  -t object_detection:latest .
       ```
-3. Run the `object_detection` package inside the Docker container
+3. Start the docker container
 
       ```bash
       cd docker_scripts/run_scripts
-      ./start.sh
+      ./run_dev.sh
       ```
+
+4. Stop the docker container
+
+  ```bash
+  docker rm -f object_detection
+  ```
 
 
 <!-- ROADMAP 
