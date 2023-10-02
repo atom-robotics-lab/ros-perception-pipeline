@@ -5,7 +5,7 @@
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="jasmeet0915@gmail.com">singh</maintainer>
-  <license>(C) A.T.O.M ROBOTICS </license>
+  <license>A.T.O.M ROBOTICS </license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
