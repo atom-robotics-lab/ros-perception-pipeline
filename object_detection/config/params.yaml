@@ -3,7 +3,7 @@ object_detection:
     input_img_topic: color_camera/image_raw
     output_bb_topic: object_detection/img_bb
     output_img_topic: object_detection/img
-    publish_output_img: 1
+    output_vision_topic: object_detection/vision_msg
     model_params:
       detector_type: RetinaNet
       model_dir_path: models/
