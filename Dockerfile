@@ -1,5 +1,8 @@
-# Use the NVIDIA CUDA base image as the base image
-FROM nvcr.io/nvidia/cuda:12.2.0-devel-ubuntu22.04
+# Use cuda_version arg to take CUDA version as input from user
+ARG cuda_version=12.2.0
+
+# Use NVIDA-CUDA's base image
+FROM nvcr.io/nvidia/cuda:${cuda_version}-devel-ubuntu22.04 
 
 # Prevent console from interacting with the user
 ARG DEBIAN_FRONTEND=noninteractive
