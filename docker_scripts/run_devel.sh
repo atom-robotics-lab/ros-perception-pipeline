@@ -2,12 +2,12 @@
 
 xhost +local:root
 
-IMAGE_NAME="object_detection:latest"
+IMAGE_NAME="object_detection"
 IMAGE_TAG="latest"
 CONTAINER_NAME="object_detection"
 
 # Build the image if it doesn't exist
-if docker images --quiet "$IMAGE_NAME:$IMAGE_TAG" > /dev/null; then
+if docker images "$IMAGE_NAME:$IMAGE_TAG" | grep -q "$IMAGE_NAME[[:space:]]+$IMAGE_TAG"; then
     echo "The image $IMAGE_NAME:$IMAGE_TAG exists."
 
 else
@@ -19,7 +19,9 @@ else
     if [ -z "$cuda_version" ]; then
         cuda_version="11.8.0"
     fi
-    docker build --build-arg cuda_version=$cuda_version -t object_detection:latest .
+    cd ..
+    docker build --build-arg cuda_version=$cuda_version -t $IMAGE_NAME:$IMAGE_TAG .
+    cd docker_scripts
 fi
 
 # Enter into the container if it is already running
