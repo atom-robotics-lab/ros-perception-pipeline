@@ -236,7 +236,7 @@ ros2 run rqt_image_view rqt_image_view
 2. Build/Start the docker container
 
       ```bash
-      cd docker_scripts/run_scripts
+      cd docker_scripts
       ./run_dev.sh
       ```
 
