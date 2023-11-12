@@ -233,24 +233,12 @@ ros2 run rqt_image_view rqt_image_view
 
 1. Refer [here](https://docs.docker.com/engine/install/) to install Docker
 
-2. Build the docker image
-
-      ```bash
-      docker build  -t object_detection:latest .
-      ```
-3. Start the docker container
+2. Build/Start the docker container
 
       ```bash
       cd docker_scripts/run_scripts
       ./run_dev.sh
       ```
-
-4. Stop the docker container
-
-  ```bash
-  docker rm -f object_detection
-  ```
-
 
 <!-- ROADMAP 
 ## Roadmap
