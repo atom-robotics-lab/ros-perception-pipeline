@@ -1,5 +1,5 @@
 # Use cuda_version arg to take CUDA version as input from user
-ARG cuda_version=12.2.0
+ARG cuda_version=11.8.0
 
 # Use NVIDA-CUDA's base image
 FROM nvcr.io/nvidia/cuda:${cuda_version}-devel-ubuntu22.04 
