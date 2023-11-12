@@ -1,8 +1,28 @@
 #!/bin/bash
 
+xhost +local:root
+
+IMAGE_NAME="object_detection:latest"
+IMAGE_TAG="latest"
 CONTAINER_NAME="object_detection"
 
-# Re-use existing container.
+# Build the image if it doesn't exist
+if docker images --quiet "$IMAGE_NAME:$IMAGE_TAG" > /dev/null; then
+    echo "The image $IMAGE_NAME:$IMAGE_TAG exists."
+
+else
+    echo "The image $IMAGE_NAME:$IMAGE_TAG does not exist. Building the image...."
+    echo "Enter your preferred CUDA Version (default set to 11.8.0) : "
+    read cuda_version
+
+    # If the user input is blank, use 11.8.0 as the cuda_version
+    if [ -z "$cuda_version" ]; then
+        cuda_version="11.8.0"
+    fi
+    docker build --build-arg cuda_version=$cuda_version -t object_detection:latest .
+fi
+
+# Enter into the container if it is already running
 if [ "$(docker ps -a --quiet --filter status=running --filter name=$CONTAINER_NAME)" ]; then
     echo "Attaching to running container: $CONTAINER_NAME"
     docker exec -it $CONTAINER_NAME /bin/bash $@
