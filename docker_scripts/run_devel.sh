@@ -7,21 +7,43 @@ IMAGE_TAG="latest"
 CONTAINER_NAME="object_detection"
 
 # Build the image if it doesn't exist
-if docker images "$IMAGE_NAME:$IMAGE_TAG" | grep -q "$IMAGE_NAME[[:space:]]+$IMAGE_TAG"; then
+if docker inspect "$IMAGE_NAME:$IMAGE_TAG" &> /dev/null; then
     echo "The image $IMAGE_NAME:$IMAGE_TAG exists."
 
 else
     echo "The image $IMAGE_NAME:$IMAGE_TAG does not exist. Building the image...."
-    echo "Enter your preferred CUDA Version (default set to 11.8.0) : "
-    read cuda_version
 
-    # If the user input is blank, use 11.8.0 as the cuda_version
-    if [ -z "$cuda_version" ]; then
-        cuda_version="11.8.0"
+    echo "Choose the base image:"
+    echo "1. NVIDIA CUDA image"
+    echo "2. Ubuntu 22.04 image"
+    read -p "Enter your choice (1 or 2): " base_image_choice
+
+    # If the user input is blank or not 1 or 2, default to NVIDIA CUDA image
+    if [ -z "$base_image_choice" ] || [ "$base_image_choice" != "1" ] && [ "$base_image_choice" != "2" ]; then
+        base_image_choice="1"
     fi
-    cd ..
-    docker build --build-arg cuda_version=$cuda_version -t $IMAGE_NAME:$IMAGE_TAG .
-    cd docker_scripts
+
+    # Choose the appropriate Dockerfile based on user input
+    if [ "$base_image_choice" == "1" ]; then
+        DOCKERFILE="Dockerfile.cuda"
+
+        echo "Enter your preferred CUDA Version (default set to 11.8.0) : "
+        read cuda_version
+
+        # If the user input is blank, use 11.8.0 as the cuda_version
+        if [ -z "$cuda_version" ]; then
+            cuda_version="11.8.0"
+        fi
+
+        cd ..
+        docker build --build-arg cuda_version="$cuda_version" -f "$DOCKERFILE" -t "$IMAGE_NAME:$IMAGE_TAG" .
+        echo "Completed building the docker image"
+    else
+        DOCKERFILE="Dockerfile.ubuntu"
+
+        cd ..
+        docker build -f "$DOCKERFILE" -t "$IMAGE_NAME:$IMAGE_TAG" .
+    fi
 fi
 
 # Enter into the container if it is already running
