@@ -223,9 +223,9 @@ Follow these steps to do this :
 We can use the Docker image built previously to run the `object_detection` package
 
   ```bash
-  cd docker_scripts
-  export PERCEP_WS_PATH=<path-to-your-colcon-ws>
-  ./run_dev.sh
+  colcon build --symlink-install
+  source install.setup.bash
+  ros2 launch object_detection object_detection.launch.py
   ```
 
 ### 3. Changing the Detector
