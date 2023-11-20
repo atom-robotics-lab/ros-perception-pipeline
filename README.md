@@ -121,7 +121,7 @@ Refer to the official [ROS 2 installation guide](https://docs.ros.org/en/humble/
     ```bash
     cd docker_scripts
     export PERCEP_WS_PATH=<path-to-your-colcon-ws>
-    ./run_dev.sh
+    ./run_devel.sh
     ```
 
 2. **Run natively**
