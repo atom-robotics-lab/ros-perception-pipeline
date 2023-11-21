@@ -104,6 +104,9 @@ These components can be stitched together to make a custom pipeline for any use-
 Follow these steps to setup this project on your systm
 
 ### Prerequisites
+Install docker and add it to user group
+
+* Refer to this [link](https://cloudyuga.guru/hands_on_lab/docker-as-non-root-user)
 
 Follow these steps to install ROS Humble and OpenCV
 * ROS Humble
@@ -121,7 +124,7 @@ Refer to the official [ROS 2 installation guide](https://docs.ros.org/en/humble/
     ```bash
     cd docker_scripts
     export PERCEP_WS_PATH=<path-to-your-colcon-ws>
-    ./run_dev.sh
+    ./run_devel.sh
     ```
 
 2. **Run natively**
@@ -136,7 +139,7 @@ Refer to the official [ROS 2 installation guide](https://docs.ros.org/en/humble/
         Now go ahead and clone this repository inside the "src" folder of the workspace you just created.
     
           ```bash
-          cd percep_ws && git clone git@github.com:atom-robotics-lab/ros-perception-pipeline.git src/
+          cd percep_ws/src && git clone git@github.com:atom-robotics-lab/ros-perception-pipeline.git
           ```
     3. Install dependencies using rosdep
     
