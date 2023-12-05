@@ -104,7 +104,17 @@ These components can be stitched together to make a custom pipeline for any use-
 Follow these steps to setup this project on your systm
 
 ### Prerequisites
-Install docker and add it to user group
+Install the binary Gazebo Garden/ROS 2 Humble packages:
+
+* Follow [these](https://gazebosim.org/docs/garden/install_ubuntu#binary-installation-on-ubuntu) instructions to install gz-garden from packages.osrfoundation.org repository.
+* Install ros_gz 
+  * From the non official binary packages from apt:
+
+    * ```apt-get install ros-humble-ros-gzgarden```
+  * Build from source:
+    * Refer to the [official ros_gz repository](https://github.com/gazebosim/ros_gz/tree/humble#from-source)
+
+Install docker and add it to user group:
 
 * Refer to this [link](https://cloudyuga.guru/hands_on_lab/docker-as-non-root-user)
 
