@@ -1,0 +1,26 @@
+## !!! THIS IS A TEMPORARY ADDITION TO THE FILE, NOT YET TESTED !!!
+# instance_segmentation:
+#   ros__parameters:
+#     input_img_topic: color_camera/image_raw
+#     output_bb_topic: instance_segmentation/img_bb
+#     output_img_topic: instance_segmentation/img
+#     publish_output_img: 1
+#     model_params:
+#       segmentator_type: RetinaNet
+#       model_dir_path: models/
+#       weight_file_name: resnet50_coco_best_v2.1.0.h5
+#       confidence_threshold: 0.7
+#       show_fps: 1
+
+object_detection:
+  ros__parameters:
+    input_img_topic: color_camera/image_raw
+    output_bb_topic: object_detection/img_bb
+    output_img_topic: object_detection/img
+    publish_output_img: 1
+    model_params:
+      detector_type: RetinaNet
+      model_dir_path: models/
+      weight_file_name: resnet50_coco_best_v2.1.0.h5
+      confidence_threshold : 0.7
+      show_fps : 1
