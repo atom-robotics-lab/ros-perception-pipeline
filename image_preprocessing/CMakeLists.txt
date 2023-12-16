@@ -5,7 +5,8 @@ project(image_preprocessing)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
-
+find_package(cv_bridge REQUIRED)
+find_package(OpenCV REQUIRED)
 # Add executable
 add_executable(test_node src/test_node.cpp)
 
@@ -19,6 +20,8 @@ target_include_directories(test_node
 ament_target_dependencies(test_node
   rclcpp
   sensor_msgs
+  cv_bridge
+  OpenCV
 )
 
 # Install the executable
