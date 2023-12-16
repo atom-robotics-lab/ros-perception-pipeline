@@ -1,12 +1,15 @@
 cmake_minimum_required(VERSION 3.5)
-#project(image_publisher)
+
 project(image_preprocessing)
+
 # Find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
+find_package(image_transport REQUIRED)
 find_package(OpenCV REQUIRED)
+
 # Add executable
 add_executable(test_node src/test_node.cpp)
 
@@ -21,6 +24,7 @@ ament_target_dependencies(test_node
   rclcpp
   sensor_msgs
   cv_bridge
+  image_transport
   OpenCV
 )
 
