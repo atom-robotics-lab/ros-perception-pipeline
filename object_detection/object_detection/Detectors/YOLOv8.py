@@ -3,7 +3,10 @@ from ultralytics import YOLO
 import os
 import time
 
-class YOLOv8:
+from ..DetectorBase import DetectorBase
+
+
+class YOLOv8(DetectorBase):
   def __init__(self, model_dir_path, weight_file_name, conf_threshold = 0.7, 
                score_threshold = 0.4, nms_threshold = 0.25,
                show_fps = 1, is_cuda = 0):
@@ -48,16 +51,6 @@ class YOLOv8:
 
     return self.class_list
 
-  # create list of dictionary containing predictions
-  def create_predictions_list(self, class_ids, confidences, boxes):  
-    
-    for i in range(len(class_ids)):
-        obj_dict = {
-            "class_id": class_ids[i],
-            "confidence": confidences[i],
-            "box": boxes[i]
-        }
-        self.predictions.append(obj_dict)
 
   def get_predictions(self, cv_image):
 
@@ -81,7 +74,7 @@ class YOLOv8:
         confidence.append(box.conf)
         bb.append(box.xyxy)
 
-      self.create_predictions_list(class_id,confidence,bb)
+      super().create_predictions_list(class_id, confidence, bb)
       result = self.model.predict(self.frame, conf = self.conf_threshold)
       output_frame = result[0].plot()                  # Frame with bounding boxes
 
