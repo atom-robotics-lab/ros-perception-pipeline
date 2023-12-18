@@ -29,10 +29,13 @@ ament_target_dependencies(test_node
 )
 
 # Install the executable
-install(TARGETS
+install(TARGETS 
   test_node
   DESTINATION lib/${PROJECT_NAME}
 )
+
+install(DIRECTORY launch config
+DESTINATION share/${PROJECT_NAME})
 
 # Install launch files, config files, and other directories if necessary
 # install(DIRECTORY launch

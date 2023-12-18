@@ -6,12 +6,9 @@
 class ImagePublisherNode : public rclcpp::Node {
 public:
     ImagePublisherNode() : Node("image_publisher_node") {
+
         // Parameter declaration
         this->declare_parameter("rotation_angle", 0);
-
-        // Initialize rotation_angle member variable
-        rotation_angle = this->get_parameter("rotation_angle").as_int();
-        
         imagesubscription = create_subscription<sensor_msgs::msg::Image>(
             "/color_camera/image_raw", 10, [this](const sensor_msgs::msg::Image::SharedPtr msg) {
                 imageCallback(msg);
@@ -20,13 +17,14 @@ public:
         imagepublisher = create_publisher<sensor_msgs::msg::Image>("img_pub", 10);
 
         publishtimer = create_wall_timer(std::chrono::milliseconds(100), [this]() {
-            // No need to get rotation_angle again, already obtained in the constructor
-            std::cout << "Rotation angle: " << rotation_angle << std::endl;
+            loadWaypoints();
         });
     }
 
 private:
-    int rotation_angle;  // Member variable to store rotation angle
+    void loadWaypoints() {
+        rotation_angle = this->get_parameter("rotation_angle").as_int();
+    }
 
     void imageCallback(const sensor_msgs::msg::Image::SharedPtr msg) {
         cv_bridge::CvImagePtr cv_ptr;
@@ -42,31 +40,34 @@ private:
     }
 
     void rotateImage(cv::Mat& image) {
-        // Process image according to the rotation angle
-        std::cout << rotation_angle << std::endl;
-        if (rotation_angle % 90 != 0) {
-            RCLCPP_ERROR(get_logger(), "Invalid rotation angle. Must be a multiple of 90 degrees.");
-            return;
-        }
+        double angle = static_cast<double>(rotation_angle);
 
-        for (int i = 0; i < abs(rotation_angle / 90); ++i) {
-            // Rotate the image by 90 degrees clockwise (or counter-clockwise)
-            cv::transpose(image, image);
-            cv::flip(image, image, (rotation_angle > 0) ? 1 : 0);
-        }
+        cv::Point2f center((image.cols - 1) / 2.0, (image.rows - 1) / 2.0);
+        cv::Mat rot = cv::getRotationMatrix2D(center, angle, 1.0);
 
-        publishImage(image);
+        cv::Rect2f bbox = cv::RotatedRect(cv::Point2f(), image.size(), angle).boundingRect2f();
+        rot.at<double>(0, 2) += bbox.width / 2.0 - image.cols / 2.0;
+        rot.at<double>(1, 2) += bbox.height / 2.0 - image.rows / 2.0;
+
+        cv::Mat rotated_image;
+        cv::warpAffine(image, rotated_image, rot, bbox.size());
+
+        publishImage(rotated_image);
     }
 
     void publishImage(cv::Mat& image) {
-        output_msg = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", image).toImageMsg();
-        imagepublisher->publish(*output_msg.get());
+        cv_bridge::CvImage cv_image(std_msgs::msg::Header(), "bgr8", image);
+        sensor_msgs::msg::Image::SharedPtr output_msg = cv_image.toImageMsg();
+        imagepublisher->publish(*output_msg);
     }
 
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr imagesubscription;
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr imagepublisher;
     rclcpp::TimerBase::SharedPtr publishtimer;
+
     sensor_msgs::msg::Image::SharedPtr output_msg;
+
+    int rotation_angle;  // Member variable to store rotation angle
 };
 
 int main(int argc, char** argv) {

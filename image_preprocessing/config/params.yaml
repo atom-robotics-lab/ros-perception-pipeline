@@ -1,3 +1,3 @@
 /image_publisher_node:
   ros__parameters:
-    rotation_angle: 180
+    rotation_angle: 60
