@@ -3,6 +3,7 @@ from ultralytics import YOLO
 import os
 import sys
 import time
+import numpy as np
 
 from ..SegmentatorBase import SegmentatorBase
 
@@ -99,5 +100,13 @@ class YOLOv8(SegmentatorBase):
         
 
     def get_segmented_image(self, cv_image):
-        result_image = self.model.predict(cv_image, conf = self.conf_threshold) # Perform object detection on image
+        # results = self.model.predict(cv_image, conf = self.conf_threshold, save=True) # Perform object detection on image
+        # results = self.model.predict(cv_image, conf = 0.2, save=True) # Perform object detection on image
+        results = self.model.predict(cv_image, conf = 0.2, save=True, show=True) # Perform object detection on image
+        # result_image_array = np.array(result_image)
+        # print(results[0].path)
+        # print("\nhuhuhaha\n")
+        # cv2.imshow(result_image)
+        # return result_image_array
+        result_image = cv2.imread("~/git/percep_ws/src/ros-perception-pipeline/instance_segmentation/runs/segment/predict/image0.jpg")
         return result_image

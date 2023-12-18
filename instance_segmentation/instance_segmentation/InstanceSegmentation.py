@@ -11,7 +11,7 @@ from sensor_msgs.msg import Image
 
 from cv_bridge import CvBridge
 import cv2
-
+import numpy as np
 
 class InstanceSegmentation(Node):
     def __init__(self):
@@ -113,13 +113,17 @@ class InstanceSegmentation(Node):
             print(predictions)
 
     def segmentation_image(self, img_msg):
-        # print(img_msg.value)
-        # cv_image = self.bridge.imgmsg_to_cv2(img_msg, "bgr8")
-        # segmented_image = self.segmentator.get_segmented_image(cv_image)
-        segmented_image = self.segmentator.get_segmented_image(img_msg)
+        # print(type(img_msg))
+        cv_image = self.bridge.imgmsg_to_cv2(img_msg, "bgr8")
+        # cv2.imshow("initial image", cv_image)
+        # print(type(cv_image))
+        segmented_image = self.segmentator.get_segmented_image(cv_image)
+        # print("ooga booga")
+        # cv2.imshow("final image", segmented_image)
+        # print(type(segmented_image))
         output = self.bridge.cv2_to_imgmsg(segmented_image, "bgr8")
+        # print("no ooga booga")
         self.img_pub.publish(output)
-        cv2.imshow(segmented_image)
 
 
 def main():
