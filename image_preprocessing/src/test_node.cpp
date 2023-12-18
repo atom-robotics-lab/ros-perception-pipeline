@@ -1,12 +1,17 @@
-#include "rclcpp/rclcpp.hpp"
-#include "sensor_msgs/msg/image.hpp"
-#include "cv_bridge/cv_bridge.h"
-#include "opencv2/opencv.hpp"
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/image.hpp>
+#include <cv_bridge/cv_bridge.h>
+#include <opencv2/opencv.hpp>
 
 class ImagePublisherNode : public rclcpp::Node {
 public:
     ImagePublisherNode() : Node("image_publisher_node") {
+        // Parameter declaration
+        this->declare_parameter("rotation_angle", 0);
 
+        // Initialize rotation_angle member variable
+        rotation_angle = this->get_parameter("rotation_angle").as_int();
+        
         imagesubscription = create_subscription<sensor_msgs::msg::Image>(
             "/color_camera/image_raw", 10, [this](const sensor_msgs::msg::Image::SharedPtr msg) {
                 imageCallback(msg);
@@ -15,27 +20,41 @@ public:
         imagepublisher = create_publisher<sensor_msgs::msg::Image>("img_pub", 10);
 
         publishtimer = create_wall_timer(std::chrono::milliseconds(100), [this]() {
+            // No need to get rotation_angle again, already obtained in the constructor
+            std::cout << "Rotation angle: " << rotation_angle << std::endl;
         });
     }
 
 private:
-    void imageCallback(const sensor_msgs::msg::Image::SharedPtr msg) {
+    int rotation_angle;  // Member variable to store rotation angle
 
+    void imageCallback(const sensor_msgs::msg::Image::SharedPtr msg) {
         cv_bridge::CvImagePtr cv_ptr;
 
         try {
             cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
-        }
-        catch(cv_bridge::Exception& e) {
+        } catch(cv_bridge::Exception& e) {
             RCLCPP_ERROR(get_logger(), "cv_bridge exception: %s", e.what());
             return;
         }
 
-        imageTranspose(cv_ptr->image);              
+        rotateImage(cv_ptr->image);
     }
 
-    void imageTranspose(cv::Mat& image) {
-        cv::transpose(image, image);
+    void rotateImage(cv::Mat& image) {
+        // Process image according to the rotation angle
+        std::cout << rotation_angle << std::endl;
+        if (rotation_angle % 90 != 0) {
+            RCLCPP_ERROR(get_logger(), "Invalid rotation angle. Must be a multiple of 90 degrees.");
+            return;
+        }
+
+        for (int i = 0; i < abs(rotation_angle / 90); ++i) {
+            // Rotate the image by 90 degrees clockwise (or counter-clockwise)
+            cv::transpose(image, image);
+            cv::flip(image, image, (rotation_angle > 0) ? 1 : 0);
+        }
+
         publishImage(image);
     }
 
