@@ -50,17 +50,20 @@ class InstanceSegmentation(Node):
         self.confidence_threshold = self.get_parameter('model_params.confidence_threshold').value
         self.show_fps = self.get_parameter('model_params.show_fps').value
         
+        print(self.segmentator_type)
         # raise an exception if specified segmentator was not found
         if self.segmentator_type not in self.available_segmentators:
             raise ModuleNotFoundError(self.segmentator_type + " Segmentator specified in config was not found. " + 
                                         "Check the Segmentators dir for available segmentators.")
         else:
             self.load_segmentator()
-    
+
+        self.load_segmentator()
         
         self.img_pub = self.create_publisher(Image, self.output_img_topic, 10)
         self.bb_pub = None
-        self.img_sub = self.create_subscription(Image, self.input_img_topic, self.segmentation_cb, 10)
+        # self.img_sub = self.create_subscription(Image, self.input_img_topic, self.segmentation_cb, 10)
+        self.img_sub = self.create_subscription(Image, self.input_img_topic, self.segmentation_image, 10)
 
         self.bridge = CvBridge()
 
@@ -73,16 +76,18 @@ class InstanceSegmentation(Node):
             if entity.endswith('.py'):
                 self.available_segmentators.append(entity[:-3])
 
+        print(self.available_segmentators)
+
         self.available_segmentators.remove('__init__')
         
     
     def load_segmentator(self):
         segmentator_mod = importlib.import_module(".Segmentators." + self.segmentator_type, "instance_segmentation")
         segmentator_class = getattr(segmentator_mod, self.segmentator_type)
-        self.segmentator = segmentator_class()
+        self.segmentator = segmentator_class(self.model_dir_path, self.weight_file_name)
         
-        self.segmentator.build_model(self.model_dir_path, self.weight_file_name)
-        self.segmentator.load_classes(self.model_dir_path)
+        self.segmentator.build_model()
+        self.segmentator.load_classes()
 
         print("Your segmentator : {} has been loaded !".format(self.segmentator_type))
     
@@ -106,6 +111,15 @@ class InstanceSegmentation(Node):
             output = self.bridge.cv2_to_imgmsg(cv_image, "bgr8")
             self.img_pub.publish(output)
             print(predictions)
+
+    def segmentation_image(self, img_msg):
+        # print(img_msg.value)
+        # cv_image = self.bridge.imgmsg_to_cv2(img_msg, "bgr8")
+        # segmented_image = self.segmentator.get_segmented_image(cv_image)
+        segmented_image = self.segmentator.get_segmented_image(img_msg)
+        output = self.bridge.cv2_to_imgmsg(segmented_image, "bgr8")
+        self.img_pub.publish(output)
+        cv2.imshow(segmented_image)
 
 
 def main():

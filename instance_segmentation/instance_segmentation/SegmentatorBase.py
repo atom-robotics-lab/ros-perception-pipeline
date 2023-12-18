@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 
-class DetectorBase(ABC):
+class SegmentatorBase(ABC):
 
     def __init__(self) -> None:
         self.predictions = []
@@ -27,4 +27,8 @@ class DetectorBase(ABC):
 
     @abstractmethod
     def get_predictions(self, cv_image: np.ndarray) -> list[dict]:
+        pass
+    
+    @abstractmethod
+    def get_segmented_image(self, cv_image: np.ndarray) -> list[dict]:
         pass
