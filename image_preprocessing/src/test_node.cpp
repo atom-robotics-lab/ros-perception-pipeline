@@ -9,6 +9,14 @@ public:
 
         // Parameter declaration
         this->declare_parameter("rotation_angle", 0);
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+
+=======
+        
+>>>>>>> bceb4e2ddd2e8be70f2f4846d0fab7d6962ce29e
+>>>>>>> 4fd2b6d04799bf6bdde8f18a0c88d3cce4110cff
         imagesubscription = create_subscription<sensor_msgs::msg::Image>(
             "/color_camera/image_raw", 10, [this](const sensor_msgs::msg::Image::SharedPtr msg) {
                 imageCallback(msg);
@@ -25,7 +33,14 @@ private:
     void loadWaypoints() {
         rotation_angle = this->get_parameter("rotation_angle").as_int();
     }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 4fd2b6d04799bf6bdde8f18a0c88d3cce4110cff
 
+=======
+    
+>>>>>>> bceb4e2ddd2e8be70f2f4846d0fab7d6962ce29e
     void imageCallback(const sensor_msgs::msg::Image::SharedPtr msg) {
         cv_bridge::CvImagePtr cv_ptr;
 
@@ -64,9 +79,16 @@ private:
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr imagesubscription;
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr imagepublisher;
     rclcpp::TimerBase::SharedPtr publishtimer;
+<<<<<<< HEAD
 
     sensor_msgs::msg::Image::SharedPtr output_msg;
 
+=======
+<<<<<<< HEAD
+=======
+    sensor_msgs::msg::Image::SharedPtr output_msg;
+>>>>>>> bceb4e2ddd2e8be70f2f4846d0fab7d6962ce29e
+>>>>>>> 4fd2b6d04799bf6bdde8f18a0c88d3cce4110cff
     int rotation_angle;  // Member variable to store rotation angle
 };
 
