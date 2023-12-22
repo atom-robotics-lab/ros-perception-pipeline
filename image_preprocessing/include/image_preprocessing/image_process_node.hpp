@@ -34,5 +34,16 @@ private:
 
     //params
     int rotation_angle = 0;  // Member variable to store rotation angle
-    bool resizeFlag = false;
+    //bool resizeFlag = false;
+    bool grayscaleFlag = false;
+    int kernel_size = 0;
+    int amount = 0;
+    int value = 255.0 ;
+    int sigma = 1;
+    int type = 0;
+    int width_multiplier = 1;
+    int height_multiplier = 1;
+    int height = 0;
+    int width = 0;
+    
 };

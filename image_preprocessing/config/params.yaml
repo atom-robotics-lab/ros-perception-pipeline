@@ -1,3 +1,14 @@
 /image_publisher_node:
   ros__parameters:
     rotation_angle: 60
+#   resizeFlag: true
+    grayscaleFlag: false
+    kernal_size: 0
+    amount: 0
+    value: 128.0 
+    sigma: 1
+    type: 0
+    width_multiplier : 1
+    height_multiplier : 1 
+    height: 1
+    width : 1     
