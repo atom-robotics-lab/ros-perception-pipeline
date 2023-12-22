@@ -58,7 +58,7 @@ def generate_launch_description():
                           ]
                       )
   
-  test_node = Node(package="image_preprocessing",executable="test_node",
+  image_process_node = Node(package="image_preprocessing",executable="image_process_node",
         output="screen",  # Adjust output options as needed
         parameters=[os.path.join(pkg_image_preprocessing, "config", "params.yaml")
         ]
@@ -71,7 +71,7 @@ def generate_launch_description():
   launch = [
     gz_sim,
     parameter_bridge,
-    test_node,
+    image_process_node,
   ]
 
   args = [
