@@ -15,7 +15,7 @@ setup(
         (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
         (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
     ],
-    install_requires=['setuptools'],
+    install_requires=['setuptools', 'vision_msgs'],
     zip_safe=True,
     maintainer='deepansh',
     maintainer_email='gl.deepansh@gmail.com',
