@@ -1,4 +1,4 @@
-void ImagePreprocessingNode::ImagePreprocessingNode() : Node("image_preprocessing_node") {
+ ImagePreprocessingNode::ImagePreprocessingNode() : Node("image_preprocessing_node") {
     // Parameter declaration
     this->declare_parameter("rotation_angle", 0);
     //this->declare_parameter("resizeFlag", false);

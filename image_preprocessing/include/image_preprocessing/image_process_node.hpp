@@ -34,7 +34,7 @@ private:
 
     // Parameters for image processing functions
     int rotation_angle = 0;  // Rotation angle in degrees
-    bool resizeFlag = false   // Flag for resizing
+    bool resizeFlag = false;   // Flag for resizing
     bool grayscaleFlag = false;  // Flag to enable grayscale conversion
     int kernel_size = 0;  // Kernel size for Gaussian blur
     int amount = 0;  // Amount for image sharpening
