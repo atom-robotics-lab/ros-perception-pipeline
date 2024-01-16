@@ -32,18 +32,18 @@ private:
 
     cv::Mat final_image;
 
-    //params
-    int rotation_angle = 0;  // Member variable to store rotation angle
-    //bool resizeFlag = false;
-    bool grayscaleFlag = false;
-    int kernel_size = 0;
-    int amount = 0;
-    int value = 255.0 ;
-    int sigma = 1;
-    int type = 0;
-    int width_multiplier = 1;
-    int height_multiplier = 1;
-    int height = 0;
-    int width = 0;
+    // Parameters for image processing functions
+    int rotation_angle = 0;  // Rotation angle in degrees
+    bool resizeFlag = false   // Flag for resizing
+    bool grayscaleFlag = false;  // Flag to enable grayscale conversion
+    int kernel_size = 0;  // Kernel size for Gaussian blur
+    int amount = 0;  // Amount for image sharpening
+    float value = 255.0;  // Threshold value
+    int sigma = 1;  // Smoothing amount for Gaussian blur
+    int type = 0;  // Type parameter for image flipping (0: x-axis, 1: y-axis, -1: both)
+    int width_multiplier = 1;  // Width multiplier for image resizing
+    int height_multiplier = 1;  // Height multiplier for image resizing
+    int height = 0;  // Height for image resizing
+    int width = 0;  // Width for image resizing
     
 };
