@@ -15,8 +15,8 @@ set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/home/rachit/percep_ws/src/ros-percep
 # Include the directory containing your header file
 include_directories(${INCLUDE_DIR})
 
-# Add executable
-add_executable(image_process_node src/image_process_node.cpp)
+# Add executables
+add_executable(image_process_node src/image_process_node.cpp src/pre_processing_functions.cpp)
 
 # Include directories for the executable
 target_include_directories(image_process_node
@@ -43,11 +43,6 @@ install(DIRECTORY launch config
 DESTINATION share/${PROJECT_NAME})
 
 include_directories(include)
-
-# Install launch files, config files, and other directories if necessary
-# install(DIRECTORY launch
-#   DESTINATION share/${PROJECT_NAME}
-# )
 
 # Install the CMake package file
 ament_package()
