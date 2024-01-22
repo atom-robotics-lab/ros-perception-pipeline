@@ -92,27 +92,28 @@ void ImagePreprocessingNode::imageCallback(const sensor_msgs::msg::Image::Shared
 
     // Rotate the image
     rotateImage(processed_image, rotation_angle);
+    std::cout<<"rotate by "<<rotation_angle<<std::endl;
 
     // Convert to grayscale
     // convertToGrayscale(processed_image);
 
-    // Resize by 2x
-    resizeImage(processed_image, cv_ptr->image.cols * 2, cv_ptr->image.rows * 2);
+    // // Resize by 2x
+    // resizeImage(processed_image, cv_ptr->image.cols * 2, cv_ptr->image.rows * 2);
 
-    // Flip horizontally
-    flipImage(processed_image, 0);
+    // // Flip horizontally
+    // flipImage(processed_image, 0);
 
-    // Flip vertically
-    flipImage(processed_image, 1);
+    // // Flip vertically
+    // flipImage(processed_image, 1);
 
-    // Apply Gaussian blur
-    gaussianBlurImage(processed_image, 5, 1);
+    // // Apply Gaussian blur
+    // gaussianBlurImage(processed_image, 5, 1);
 
-    // Sharpen the image
-    sharpenImage(processed_image, 1);
+    // // Sharpen the image
+    // sharpenImage(processed_image, 1);
 
-    // Apply thresholding
-    thresholdImage(processed_image, 128.0);
+    // // Apply thresholding
+    // thresholdImage(processed_image, 128.0);
 
     // Publish the processed image
     publishImage(processed_image);
