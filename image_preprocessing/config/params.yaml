@@ -8,7 +8,5 @@
     value: 128.0 
     sigma: 1
     type: 0
-    width_multiplier : 1
-    height_multiplier : 1 
-    height: 1
-    width : 1     
+    width_multiplier : 3.0
+    height_multiplier : 3.0

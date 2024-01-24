@@ -13,10 +13,10 @@ ImagePreprocessingNode::ImagePreprocessingNode() : Node("image_preprocessing_nod
     this->declare_parameter("amount", 1);
     this->declare_parameter("value", 255.0);
     this->declare_parameter("type", 0);
-    this->declare_parameter("width_multiplier", 1);
-    this->declare_parameter("height_multiplier", 1);
-    this->declare_parameter("width", 0);
-    this->declare_parameter("height", 0);
+    this->declare_parameter("width_multiplier", 1.0);
+    this->declare_parameter("height_multiplier", 1.0);
+    // this->declare_parameter("width", 0);
+    // this->declare_parameter("height", 0);
 
     image_subscription = create_subscription<sensor_msgs::msg::Image>(
         "/color_camera/image_raw", 10, [this](const sensor_msgs::msg::Image::SharedPtr msg) {
@@ -61,16 +61,16 @@ void ImagePreprocessingNode::loadWaypoints()
     amount = this->get_parameter("amount").as_int();
 
     // Load width multiplier parameter for image resizing
-    width_multiplier = this->get_parameter("width_multiplier").as_int();
+    width_multiplier = this->get_parameter("width_multiplier").as_double();
 
     // Load height multiplier parameter for image resizing
-    height_multiplier = this->get_parameter("height_multiplier").as_int();
+    height_multiplier = this->get_parameter("height_multiplier").as_double();
 
     // Load width parameter for image resizing (if width_multiplier is not used)
-    width = this->get_parameter("width").as_int();
+    // width = this->get_parameter("width").as_int();
 
-    // Load height parameter for image resizing (if height_multiplier is not used)
-    height = this->get_parameter("height").as_int();
+    // // Load height parameter for image resizing (if height_multiplier is not used)
+    // height = this->get_parameter("height").as_int();
 }
 
 void ImagePreprocessingNode::imageCallback(const sensor_msgs::msg::Image::SharedPtr msg) 
@@ -91,14 +91,15 @@ void ImagePreprocessingNode::imageCallback(const sensor_msgs::msg::Image::Shared
     cv::Mat processed_image = cv_ptr->image.clone();  // Make a copy of the original image
 
     // Rotate the image
-    rotateImage(processed_image, rotation_angle);
-    std::cout<<"rotate by "<<rotation_angle<<std::endl;
+    // rotateImage(processed_image, rotation_angle);
+    // std::cout<<"rotate by "<<rotation_angle<<std::endl;
 
     // Convert to grayscale
     // convertToGrayscale(processed_image);
 
-    // // Resize by 2x
-    // resizeImage(processed_image, cv_ptr->image.cols * 2, cv_ptr->image.rows * 2);
+    // Resize by 2x
+    std::cout<<width_multiplier<<" "<<height_multiplier<<std::endl;
+    resizeImage(processed_image,width_multiplier,height_multiplier);
 
     // // Flip horizontally
     // flipImage(processed_image, 0);

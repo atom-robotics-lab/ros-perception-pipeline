@@ -22,15 +22,16 @@ static void convertToGrayscale(cv::Mat& image)
     image = grayscale_image;
 }
 
-static void resizeImage(cv::Mat& image, int width, int height)
-{
-    cv::resize(image, image, cv::Size(width, height), 0, 0, cv::INTER_LINEAR);
-}
+// static void resizeImage(cv::Mat& image, int width, int height)
+// {
+//     cv::resize(image, image, cv::Size(width, height), 0, 0, cv::INTER_LINEAR);
+// }
 
 static void resizeImage(cv::Mat& image, float width_multiplier, float height_multiplier)
 {
     int new_width = static_cast<int>(image.cols * width_multiplier);
     int new_height = static_cast<int>(image.rows * height_multiplier);
+
     cv::resize(image, image, cv::Size(new_width, new_height), 0, 0, cv::INTER_LINEAR);
 }
 
