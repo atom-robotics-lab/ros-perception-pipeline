@@ -15,11 +15,14 @@ static void rotateImage(cv::Mat& image, int rotation_angle)
 }
 
 static void convertToGrayscale(cv::Mat& image)
-{
-    cv::Mat grayscale_image;
+{     
+    cv::Mat grayscale_image(image.size(), CV_8UC1);
+
+    // Convert to grayscale
     cv::cvtColor(image, grayscale_image, cv::COLOR_BGR2GRAY);
-    // Modify the input image directly
-    image = grayscale_image;
+
+    // Replicate the single channel to all three channels
+    cv::cvtColor(grayscale_image, image, cv::COLOR_GRAY2BGR);
 }
 
 // static void resizeImage(cv::Mat& image, int width, int height)
