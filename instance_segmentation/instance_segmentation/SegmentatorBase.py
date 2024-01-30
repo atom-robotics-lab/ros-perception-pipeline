@@ -7,12 +7,12 @@ class SegmentatorBase(ABC):
     def __init__(self) -> None:
         self.predictions = []
 
-    def create_predictions_list(self, class_ids, confidences, boxes):
+    def create_predictions_list(self, class_ids, confidences, masks):
         for i in range(len(class_ids)):
             obj_dict = {
                 "class_id": class_ids[i],
                 "confidence": confidences[i],
-                "box": boxes[i]
+                "mask": masks[i]
             }
 
             self.predictions.append(obj_dict)

@@ -63,25 +63,23 @@ class YOLOv8(SegmentatorBase):
             self.frame_count += 1
             self.total_frames += 1
 
-            class_id = []
-            confidence = []
-            bb = []
+            class_ids = []
+            confidences = []
+            masks = []
             result = self.model.predict(self.frame, conf = self.conf_threshold) # Perform object detection on image
             row = result[0].boxes
 
             for box in row:
-                class_id.append(box.cls)
-                confidence.append(box.conf)
-                bb.append(box.xyxy)
+                class_ids.append(box.cls)
+                confidences.append(box.conf)
+                # masks.append(mask.xyxy)
+            for mask in result[0].masks:
+                masks.append(mask.xy)
 
-            super().create_predictions_list(class_id, confidence, bb)
-            result = self.model.predict(self.frame, conf = self.conf_threshold)
-            output_frame = result[0].plot()                                    # Frame with bounding boxes
 
             print("frame_count : ", self.frame_count)
 
-
-            if self.show_fps :
+            if self.show_fps:
                 if self.frame_count >= 30:
                     self.end = time.time_ns()
                     self.fps = 1000000000 * self.frame_count / (self.end - self.start)
@@ -90,9 +88,9 @@ class YOLOv8(SegmentatorBase):
 
                 if self.fps > 0:
                     self.fps_label = "FPS: %.2f" % self.fps
-                    cv2.putText(output_frame, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                    cv2.putText(cv_image, self.fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
-            return self.predictions, output_frame
+            return self.predictions, cv_image
         
 
     def get_segmented_image(self, cv_image):
