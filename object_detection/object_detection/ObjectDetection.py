@@ -96,7 +96,7 @@ class ObjectDetection(Node):
             print("Image input from topic : {} is empty".format(self.input_img_topic))
         else :
             for prediction in predictions:
-                left, top, width, height = prediction['box']
+                left, top, width, height = map(int, prediction['box'][0])
                 right = left + width
                 bottom = top + height
 
