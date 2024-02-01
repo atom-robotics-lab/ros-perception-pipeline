@@ -91,12 +91,12 @@ class ObjectDetection(Node):
         cv_image = self.bridge.imgmsg_to_cv2(img_msg, "bgr8")
 
         predictions = self.detector.get_predictions(cv_image=cv_image)
-
+        
         if predictions == None :
             print("Image input from topic : {} is empty".format(self.input_img_topic))
         else :
             for prediction in predictions:
-                left, top, width, height = prediction['box']
+                left, top, width, height = map(int, prediction['box'][0])
                 right = left + width
                 bottom = top + height
 

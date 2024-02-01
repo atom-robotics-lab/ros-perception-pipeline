@@ -33,7 +33,7 @@ class YOLOv8(DetectorBase):
     return self.class_list
 
   def get_predictions(self, cv_image):
-
+    
     if cv_image is None:
       # TODO: show warning message (different color, maybe)
       return None,None
