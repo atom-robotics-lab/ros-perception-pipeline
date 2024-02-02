@@ -1,0 +1,14 @@
+## !!! THIS IS A TEMPORARY ADDITION TO THE FILE, NOT YET TESTED !!!
+instance_segmentation:
+  ros__parameters:
+    input_img_topic: color_camera/image_raw
+    output_bb_topic: instance_segmentation/img_bb
+    output_img_topic: instance_segmentation/img
+    publish_output_img: 1
+    model_params:
+      segmentator_type: YOLOv8
+      model_dir_path: /home/deepansh/git/percep_ws/src/ros-perception-pipeline/models
+      weight_file_name: yolov8s-seg.pt
+      confidence_threshold: 0.7
+      show_fps: 1
+

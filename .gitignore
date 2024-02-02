@@ -4,6 +4,10 @@
 #Ignore pycache dirs
 object_detection/object_detection/Detectors/__pycache__/
 object_detection/object_detection/__pycache__/
+**/__pycache__
+
+# Ignore log folder
+log/
 
 #Ignore .vscode dir
 .vscode
