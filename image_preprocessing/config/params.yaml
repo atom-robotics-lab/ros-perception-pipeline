@@ -1,7 +1,6 @@
 /image_preprocessing_node:
   ros__parameters:
     rotation_angle: 60
-#   resizeFlag: true
     grayscaleFlag: true
     kernal_size: 0
     amount: 0

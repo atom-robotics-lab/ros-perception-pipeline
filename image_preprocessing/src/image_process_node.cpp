@@ -6,7 +6,6 @@ ImagePreprocessingNode::ImagePreprocessingNode() : Node("image_preprocessing_nod
 {
     // Parameter declaration
     this->declare_parameter("rotation_angle", 0);
-    //this->declare_parameter("resizeFlag", false);
     this->declare_parameter("grayscaleFlag", false);
     this->declare_parameter("kernel_size", 0);
     this->declare_parameter("sigma", 1);
@@ -15,8 +14,6 @@ ImagePreprocessingNode::ImagePreprocessingNode() : Node("image_preprocessing_nod
     this->declare_parameter("type", 0);
     this->declare_parameter("width_multiplier", 1.0);
     this->declare_parameter("height_multiplier", 1.0);
-    // this->declare_parameter("width", 0);
-    // this->declare_parameter("height", 0);
 
     image_subscription = create_subscription<sensor_msgs::msg::Image>(
         "/color_camera/image_raw", 10, [this](const sensor_msgs::msg::Image::SharedPtr msg) {
@@ -25,9 +22,6 @@ ImagePreprocessingNode::ImagePreprocessingNode() : Node("image_preprocessing_nod
 
     image_publisher = create_publisher<sensor_msgs::msg::Image>("/img_pub", 10);
 
-    // publishtimer = create_wall_timer(std::chrono::milliseconds(100), [this]() {
-    //     loadWaypoints();
-    // });
 }
 
 void ImagePreprocessingNode::publishImage(cv::Mat& image)
@@ -66,11 +60,6 @@ void ImagePreprocessingNode::loadWaypoints()
     // Load height multiplier parameter for image resizing
     height_multiplier = this->get_parameter("height_multiplier").as_double();
 
-    // Load width parameter for image resizing (if width_multiplier is not used)
-    // width = this->get_parameter("width").as_int();
-
-    // // Load height parameter for image resizing (if height_multiplier is not used)
-    // height = this->get_parameter("height").as_int();
 }
 
 void ImagePreprocessingNode::imageCallback(const sensor_msgs::msg::Image::SharedPtr msg) 
@@ -98,8 +87,8 @@ void ImagePreprocessingNode::imageCallback(const sensor_msgs::msg::Image::Shared
     // convertToGrayscale(processed_image);
 
     // Resize by 2x
-    std::cout<<width_multiplier<<" "<<height_multiplier<<std::endl;
-    resizeImage(processed_image,width_multiplier,height_multiplier);
+    //std::cout<<width_multiplier<<" "<<height_multiplier<<std::endl;
+    //resizeImage(processed_image,width_multiplier,height_multiplier);
 
     // // Flip horizontally
     // flipImage(processed_image, 0);

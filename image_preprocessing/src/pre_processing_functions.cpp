@@ -25,11 +25,6 @@ static void convertToGrayscale(cv::Mat& image)
     cv::cvtColor(grayscale_image, image, cv::COLOR_GRAY2BGR);
 }
 
-// static void resizeImage(cv::Mat& image, int width, int height)
-// {
-//     cv::resize(image, image, cv::Size(width, height), 0, 0, cv::INTER_LINEAR);
-// }
-
 static void resizeImage(cv::Mat& image, float width_multiplier, float height_multiplier)
 {
     int new_width = static_cast<int>(image.cols * width_multiplier);
