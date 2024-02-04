@@ -104,6 +104,19 @@ These components can be stitched together to make a custom pipeline for any use-
 Follow these steps to setup this project on your systm
 
 ### Prerequisites
+Install the binary Gazebo Garden/ROS 2 Humble packages:
+
+* Follow [these](https://gazebosim.org/docs/garden/install_ubuntu#binary-installation-on-ubuntu) instructions to install gz-garden from packages.osrfoundation.org repository.
+* Install ros_gz 
+  * From the non official binary packages from apt:
+
+    * ```apt-get install ros-humble-ros-gzgarden```
+  * Build from source:
+    * Refer to the [official ros_gz repository](https://github.com/gazebosim/ros_gz/tree/humble#from-source)
+
+Install docker and add it to user group:
+
+* Refer to this [link](https://cloudyuga.guru/hands_on_lab/docker-as-non-root-user)
 
 Follow these steps to install ROS Humble and OpenCV
 * ROS Humble
@@ -116,45 +129,54 @@ Refer to the official [ROS 2 installation guide](https://docs.ros.org/en/humble/
 
 ### Installation
 
-1. Make a new workspace
+1. **Run using Docker**
+    
     ```bash
-    mkdir -p percep_ws/src
+    cd docker_scripts
+    export PERCEP_WS_PATH=<path-to-your-colcon-ws>
+    ./run_devel.sh
     ```
 
-2. Clone the ROS-Perception-Pipeline repository
+2. **Run natively**
 
-    Now go ahead and clone this repository inside the "src" folder of the workspace you just created.
-
-      ```bash
-      cd percep_ws && git clone git@github.com:atom-robotics-lab/ros-perception-pipeline.git src/
-      ```
-3. Install dependencies using rosdep
-
-    Update Your rosdep before installation.
-
-    ```bash
-    rosdep update
-    ```
+    1. Make a new workspace
+        ```bash
+        mkdir -p percep_ws/src
+        ```
+    
+    2. Clone the ROS-Perception-Pipeline repository
+    
+        Now go ahead and clone this repository inside the "src" folder of the workspace you just created.
+    
+          ```bash
+          cd percep_ws/src && git clone git@github.com:atom-robotics-lab/ros-perception-pipeline.git
+          ```
+    3. Install dependencies using rosdep
+    
+        Update Your rosdep before installation.
+    
+        ```bash
+        rosdep update
+        ```
+          
+        This command installs all the packages that the packages in your catkin workspace depend upon but are missing on your computer.
+        ```bash
+        rosdep install --from-paths src --ignore-src -r -y
+        ```
+    
+    4. Compile the package
+    
+        Follow this execution to compile your ROS 2 package
       
-    This command installs all the packages that the packages in your catkin workspace depend upon but are missing on your computer.
-    ```bash
-    rosdep install --from-paths src --ignore-src -r -y
-    ```
-
-4. Compile the package
-
-    Follow this execution to compile your ROS 2 package
-  
-      ```bash
-      colcon build --symlink-install
-      ```
-
-5. Source your workspace
-     
-      ```bash
-      source install/local_setup.bash
-      ```
-
+          ```bash
+          colcon build --symlink-install
+          ```
+    
+    5. Source your workspace
+         
+          ```bash
+          source install/local_setup.bash
+          ```
 
 
 <!-- USAGE EXAMPLES -->
@@ -178,7 +200,7 @@ Don't forget to click on the **play** button on the bottom left corner of the Ig
 
 <br>
 
-### 2. Launch the Object Detection node
+### 2.1 Launch the Object Detection node natively
 <br>
 
 Use the pip install command as shown below to install the required packages.
@@ -190,7 +212,7 @@ Use the command given below to run the ObjectDetection node. Remember to change 
 file according to your present working directory
 
 ```bash 
-ros2 run object_detection ObjectDetection --ros-args --params-file src/ros-perception-pipeline/object_detection/config/object_detection.yaml
+ros2 launch object_detection object_detection.launch.py
 ```
 
 **Note :** If your imports are not working while using a virtual environment, you'll need to manually set your `PYTHONPATH` environment variable.
@@ -208,6 +230,16 @@ Follow these steps to do this :
     export PYTHONPATH = {insert_your_python_path_here}
     ```
 
+### 2.2 Launch the Object Detection node using Docker
+<br>
+
+We can use the Docker image built previously to run the `object_detection` package
+
+  ```bash
+  colcon build --symlink-install
+  source install.setup.bash
+  ros2 launch object_detection object_detection.launch.py
+  ```
 
 ### 3. Changing the Detector
 
@@ -228,8 +260,7 @@ ros2 run rqt_image_view rqt_image_view
 
 <img src = "assets/rqt_yolov8.png" width = 800>
 <br>
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
+<p align="right">(<a href="#readme-top">back to top</a>)</p>      
 
 <!-- ROADMAP 
 ## Roadmap

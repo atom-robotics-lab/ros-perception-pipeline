@@ -1,4 +1,3 @@
-import time
 import os
 import cv2
 import numpy as np
@@ -7,7 +6,7 @@ from ..DetectorBase import DetectorBase
 
 
 class YOLOv5(DetectorBase):
-    def __init__(self, conf_threshold = 0.7, score_threshold = 0.4, nms_threshold = 0.25, is_cuda = 0):
+    def __init__(self, conf_threshold = 0.7, score_threshold = 0.4, nms_threshold = 0.25, is_cuda = 1):
 
         super().__init__()
 
@@ -144,8 +143,6 @@ class YOLOv5(DetectorBase):
             outs = self.detect(inputImage)
             class_ids, confidences, boxes = self.wrap_detection(inputImage, outs[0])
 
-            super().create_predictions_list(class_ids, confidences, boxes)
-                            
-            print("Detected ids: ", class_ids)         
+            super().create_predictions_list(class_ids, confidences, boxes)  
             
             return self.predictions

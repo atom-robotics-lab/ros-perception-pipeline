@@ -80,7 +80,7 @@ class ObjectDetection(Node):
         detector_mod = importlib.import_module(".Detectors." + self.detector_type, "object_detection")
         detector_class = getattr(detector_mod, self.detector_type)
         self.detector = detector_class()
-        
+
         self.detector.build_model(self.model_dir_path, self.weight_file_name)
         self.detector.load_classes(self.model_dir_path)
 
@@ -91,21 +91,25 @@ class ObjectDetection(Node):
         cv_image = self.bridge.imgmsg_to_cv2(img_msg, "bgr8")
 
         predictions = self.detector.get_predictions(cv_image=cv_image)
-
+        
         if predictions == None :
             print("Image input from topic : {} is empty".format(self.input_img_topic))
         else :
             for prediction in predictions:
-                left, top, width, height = map(int, prediction['box'][0])
-                right = left + width
-                bottom = top + height
+                x1, y1, x2, y2 = map(int, prediction['box'])                
 
-                #Draw the bounding box
-                cv_image = cv2.rectangle(cv_image,(left,top),(right, bottom),(0,255,0),1)
+                # Draw the bounding box
+                cv_image = cv2.rectangle(cv_image, (x1, y1), (x2, y2), (0,255,0),1)
+
+                # Show names of classes on the output image
+                class_id = int(prediction['class_id'])
+                class_name = self.detector.class_list[class_id]
+                label = f"{class_name} : {prediction['confidence']:.2f}"
+
+                cv_image = cv2.putText(cv_image, label, (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
 
             output = self.bridge.cv2_to_imgmsg(cv_image, "bgr8")
             self.img_pub.publish(output)
-            print(predictions)
 
 
 def main():
@@ -120,6 +124,3 @@ def main():
 
 if __name__=="__main__" :
     main()
-
-
-
