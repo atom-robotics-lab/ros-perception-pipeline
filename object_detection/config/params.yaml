@@ -8,5 +8,5 @@ object_detection:
       detector_type: YOLOv8
       model_dir_path: /home/mediapipe/Desktop/ros_workspaces/percep_ws/models/yolov8
       weight_file_name: yolov8s.pt
-      confidence_threshold : 0.7
+      confidence_threshold : 0.5
       show_fps : 1

@@ -1,7 +1,5 @@
-import cv2
 from ultralytics import YOLO
 import os
-import time
 
 from ..DetectorBase import DetectorBase
 
@@ -54,5 +52,4 @@ class YOLOv8(DetectorBase):
         
       super().create_predictions_list(class_id, confidence, boxes)
       
-
       return self.predictions
