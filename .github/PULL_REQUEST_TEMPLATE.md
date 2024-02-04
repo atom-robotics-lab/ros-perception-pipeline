@@ -1,3 +1,12 @@
+---
+Name: Pull Request template
+About: Mention details about your Pull Request
+Title: ''
+Labels: ''
+Assignees: ''
+
+---
+
 # Description 📖
 
 Please include a summary of the changes and the related issue. Please also include relevant motivation and context. List any dependencies that are required for this change.
@@ -26,5 +35,3 @@ Please describe the tests that you ran to verify your changes. Provide instructi
 * Hardware:
 * NVIDIA Driver:
 * CUDA Version:
-
-
