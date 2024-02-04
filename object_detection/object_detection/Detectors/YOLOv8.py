@@ -43,15 +43,16 @@ class YOLOv8(DetectorBase):
       class_id = []
       confidence = []
       boxes = []
+
       result = self.model.predict(self.frame, conf = self.conf_threshold, verbose = False) # Perform object detection on image
-      row = result[0].boxes
+      row = result[0].boxes.cpu()
 
       for box in row:
         class_id.append(box.cls.numpy().tolist())
         confidence.append(box.conf.numpy().tolist())
         boxes.append(box.xyxy.numpy().tolist())
         
-      super().create_predictions_list(class_id,confidence,boxes)
+      super().create_predictions_list(class_id, confidence, boxes)
       
 
       return self.predictions

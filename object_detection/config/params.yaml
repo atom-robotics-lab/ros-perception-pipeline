@@ -6,7 +6,7 @@ object_detection:
     publish_output_img: 1
     model_params:
       detector_type: YOLOv8
-      model_dir_path: /home/deepansh/git/percep_ws/src/ros-perception-pipeline/models
+      model_dir_path: /home/mediapipe/Desktop/ros_workspaces/percep_ws/models/yolov8
       weight_file_name: yolov8s.pt
-      confidence_threshold : 0.9
+      confidence_threshold : 0.7
       show_fps : 1
