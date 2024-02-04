@@ -133,6 +133,7 @@ class ObjectDetection(Node):
                 results_msg.hypothesis = hypothesis_msg
                 detection_msg.results.append(results_msg)
                 
+                # Appending the detections as messages in the dection array
                 detection_arr.detections.append(detection_msg)
                 
 
