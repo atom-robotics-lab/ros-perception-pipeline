@@ -96,17 +96,17 @@ class ObjectDetection(Node):
             print("Image input from topic : {} is empty".format(self.input_img_topic))
         else :
             for prediction in predictions:
-                left, top, right, bottom = map(int, prediction['box'][0])                
+                x1, y1, x2, y2 = map(int, prediction['box'])                
 
                 # Draw the bounding box
-                cv_image = cv2.rectangle(cv_image, (left, top), (right, bottom), (0,255,0),1)
+                cv_image = cv2.rectangle(cv_image, (x1, y1), (x2, y2), (0,255,0),1)
 
                 # Show names of classes on the output image
-                class_id = int(prediction['class_id'][0])
+                class_id = int(prediction['class_id'])
                 class_name = self.detector.class_list[class_id]
-                label = f"{class_name} : {prediction['confidence'][0]:.2f}"
+                label = f"{class_name} : {prediction['confidence']:.2f}"
 
-                cv_image = cv2.putText(cv_image, label, (left, top - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+                cv_image = cv2.putText(cv_image, label, (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
 
             output = self.bridge.cv2_to_imgmsg(cv_image, "bgr8")
             self.img_pub.publish(output)

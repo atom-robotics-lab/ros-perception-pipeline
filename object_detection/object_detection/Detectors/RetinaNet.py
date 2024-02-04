@@ -62,4 +62,3 @@ class RetinaNet(DetectorBase) :
             return self.predictions
     
 
-

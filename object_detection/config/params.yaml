@@ -5,8 +5,8 @@ object_detection:
     output_img_topic: object_detection/img
     publish_output_img: 1
     model_params:
-      detector_type: YOLOv8
-      model_dir_path: /home/mediapipe/Desktop/ros_workspaces/percep_ws/models/yolov8
-      weight_file_name: yolov8s.pt
+      detector_type: YOLOv5
+      model_dir_path: /root/percep_ws/models
+      weight_file_name: yolov5x.onnx
       confidence_threshold : 0.5
       show_fps : 1
