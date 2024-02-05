@@ -2,9 +2,9 @@
 
 xhost +local:root
 
-IMAGE_NAME="object_detection"
+IMAGE_NAME="perception_pipeline"
 IMAGE_TAG="latest"
-CONTAINER_NAME="object_detection"
+CONTAINER_NAME="perception_pipeline"
 
 # Build the image if it doesn't exist
 if docker inspect "$IMAGE_NAME:$IMAGE_TAG" &> /dev/null; then
@@ -69,4 +69,4 @@ docker run --gpus all --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 
 --env CYCLONEDDS_URI=/ddsconfig.xml \
 --env="QT_X11_NO_MITSHM=1"  \
 --env="DISPLAY"  \
-object_detection:latest
+$IMAGE_NAME:$IMAGE_TAG
