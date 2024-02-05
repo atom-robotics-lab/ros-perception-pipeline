@@ -21,12 +21,14 @@ jobs:
       - name: Build Docker Image
         run:  docker build . --file Dockerfile.ubuntu -t ${{ github.repository }}:latest
       - name: Run Docker Image
-        run:  docker run -it --rm --privileged --net=host \
+        run:  docker run --rm --privileged --net=host \
               --name ${{ github.repository }} \
               -v $PERCEP_WS_PATH/src/:/root/percep_ws/src \
               -v $PERCEP_WS_PATH/models/:/root/percep_ws/models/ \
               -v ddsconfig.xml:/ddsconfig.xml \
               --env CYCLONEDDS_URI=/ddsconfig.xml \
               ${{ github.repository }}:latest
-      - name: Build all the ROS 2 Packages
+      - name: Attach the docker container
+        run:  docker attach ${{ github.repository }}
+      - name: Build ROS 2 Packages
         run:  colcon build
