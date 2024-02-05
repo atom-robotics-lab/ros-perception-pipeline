@@ -1,0 +1,33 @@
+name: Build and Test Workflows
+
+on:
+  pull_requests:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+
+jobs:
+  build_source:
+    name: Build Docker Image and ROS 2 Packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+      - name: Set Perception Workspace Path Env Variable
+        run:  export PERCEP_WS_PATH=$GITHUB_WORKSPACE
+      - name: Build Docker Image
+        run:  docker build . --file Dockerfile.ubuntu -t perception_pipeline:latest
+      - name: Run Docker Image
+        run:  docker run --gpus all --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 \
+              -it --rm --privileged --net=host --ipc=host \
+              --name perception_pipeline \
+              -v $PERCEP_WS_PATH/src/:/root/percep_ws/src \
+              -v $PERCEP_WS_PATH/models/:/root/percep_ws/models/ \
+              -v ddsconfig.xml:/ddsconfig.xml \
+              --env CYCLONEDDS_URI=/ddsconfig.xml \
+              $perception_pipeline:latest
+      - name: Build all the ROS 2 Packages
+        run:  colcon build
