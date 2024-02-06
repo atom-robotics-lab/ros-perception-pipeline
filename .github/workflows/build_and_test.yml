@@ -20,13 +20,13 @@ jobs:
         run:  docker build . --file Dockerfile.ubuntu -t ${{ github.repository }}:latest
       - name: Run Docker Image
         run:  docker run --rm --privileged --net=host \
-              --name ${{ github.repository }} \
-              -v ${{ github.workspace }}/src/:/root/percep_ws/src \
-              -v ${{ github.workspace }}/models/:/root/percep_ws/models/ \
+              --name perception_pipeline \
+              -v ${{ github.workspace }}/src:/root/percep_ws/src \
+              -v ${{ github.workspace }}/models:/root/percep_ws/models/ \
               -v ddsconfig.xml:/ddsconfig.xml \
               --env CYCLONEDDS_URI=/ddsconfig.xml \
               ${{ github.repository }}:latest
       - name: Attach the docker container
-        run:  docker attach ${{ github.repository }}
+        run:  docker attach perception_pipeline
       - name: Build ROS 2 Packages
         run:  colcon build
