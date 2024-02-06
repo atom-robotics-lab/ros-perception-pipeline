@@ -19,10 +19,7 @@ jobs:
       - name: Build Docker Image
         run:  docker build . --file Dockerfile.ubuntu -t ${{ github.repository }}:latest
       - name: Run Docker Image
-        run:  docker run --rm --privileged --net=host \
-              --name perception_pipeline \
-              -v ${{ github.workspace }}:/root/percep_ws/src \
-              ${{ github.repository }}:latest
+        run:  docker run --name perception_pipeline -v ${{ github.workspace }}:/root/percep_ws/src ${{ github.repository }}:latest
       - name: Attach the docker container
         run:  docker attach perception_pipeline
       - name: Build ROS 2 Packages
