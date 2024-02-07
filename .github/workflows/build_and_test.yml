@@ -21,9 +21,10 @@ jobs:
       - name: Build Docker Image
         run:  docker build . --file Dockerfile.ubuntu -t ${{ github.repository }}:latest
       - name: Run Docker Image
-        run:  docker run -it -d --name perception_pipeline \
-              -v ${{ github.workspace }}:$PERCEP_WS/src \
-              ${{ github.repository }}:latest
+        run:  |
+          docker run -it -d --name perception_pipeline \
+          -v ${{ github.workspace }}:$PERCEP_WS/src \
+          ${{ github.repository }}:latest
       - name: Build ROS 2 Packages in Container
         run:  docker exec ${{ github.repository }}:latest bash -c \
               "source /opt/ros/humble/setup.bash && cd $PERCEP_WS && colcon build"
