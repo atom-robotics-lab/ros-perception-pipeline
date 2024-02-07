@@ -13,6 +13,10 @@ jobs:
   ament_lint:
     name: Lint and Codecheck
     runs-on:  ubuntu-latest
+    strategy:
+      fail-fast:  false
+      matrix:
+        linter: [copyright, flake8, mypy, pep257, pep8, xmllint]
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
@@ -21,7 +25,7 @@ jobs:
       - name: ROS Lint Action
         uses: ros-tooling/action-ros-lint@master
         with:
-          linter: [copyright, flake8, mypy, pep257, pep8, xmllint]
+          linter: ${{ matrix.linter }}
   build_source:
     name: Build Docker Image and ROS 2 Packages
     runs-on: ubuntu-latest
