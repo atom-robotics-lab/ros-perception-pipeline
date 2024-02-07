@@ -26,6 +26,7 @@ jobs:
         uses: ros-tooling/action-ros-lint@master
         with:
           linter: ${{ matrix.linter }}
+          package-name: "*"
   build_source:
     name: Build Docker Image and ROS 2 Packages
     runs-on: ubuntu-latest
