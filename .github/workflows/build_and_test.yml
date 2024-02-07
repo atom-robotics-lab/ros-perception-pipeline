@@ -10,6 +10,18 @@ on:
       - main
 
 jobs:
+  ament_lint:
+    name: Lint and Codecheck
+    runs-on:  ubuntu-latest
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+      - name: Setup ROS
+        uses: ros-tooling/setup-ros@master
+      - name: ROS Lint Action
+        uses: ros-tooling/action-ros-lint@master
+        with:
+          linter: [copyright, flake8, mypy, pep257, pep8, xmllint]
   build_source:
     name: Build Docker Image and ROS 2 Packages
     runs-on: ubuntu-latest
