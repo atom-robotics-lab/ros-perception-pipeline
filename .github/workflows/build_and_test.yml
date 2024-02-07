@@ -13,14 +13,17 @@ jobs:
   build_source:
     name: Build Docker Image and ROS 2 Packages
     runs-on: ubuntu-latest
+    env:
+      PERCEP_WS:  /root/percep_ws
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
       - name: Build Docker Image
         run:  docker build . --file Dockerfile.ubuntu -t ${{ github.repository }}:latest
       - name: Run Docker Image
-        run:  docker run --name perception_pipeline -v ${{ github.workspace }}:/root/percep_ws/src ${{ github.repository }}:latest
-      - name: Attach the docker container
-        run:  docker attach perception_pipeline
-      - name: Build ROS 2 Packages
-        run:  colcon build
+        run:  docker run -it -d --name perception_pipeline \
+              -v ${{ github.workspace }}:$PERCEP_WS/src \
+              ${{ github.repository }}:latest
+      - name: Build ROS 2 Packages in Container
+        run:  docker exec ${{ github.repository }}:latest bash -c \
+              "source /opt/ros/humble/setup.bash && cd $PERCEP_WS && colcon build"
