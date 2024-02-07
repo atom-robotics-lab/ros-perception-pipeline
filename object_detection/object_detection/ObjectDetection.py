@@ -107,22 +107,25 @@ class ObjectDetection(Node):
             print("Image input from topic: {} is empty".format(self.input_img_topic))
         else:
             for prediction in predictions:
-                x1, y1, x2, y2 = map(int, prediction['box'])
+                confidence = prediction['confidence']
 
-                # Draw the bounding box
-                cv_image = cv2.rectangle(cv_image, (x1, y1), (x2, y2), (0, 255, 0), 1)
+                # Check if the confidence is above the threshold
+                if confidence >= self.confidence_threshold:
+                    x1, y1, x2, y2 = map(int, prediction['box'])                
 
-                # Show names of classes on the output image
-                class_id = int(prediction['class_id'])
-                class_name = self.detector.class_list[class_id]
-                label = f"{class_name}: {prediction['confidence']:.2f}"
+                    # Draw the bounding box
+                    cv_image = cv2.rectangle(cv_image, (x1, y1), (x2, y2), (0, 255, 0), 1)
 
-                cv_image = cv2.putText(cv_image, label, (x1, y1 - 5),
-                                       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+                    # Show names of classes on the output image
+                    class_id = int(prediction['class_id'])
+                    class_name = self.detector.class_list[class_id]
+                    label = f"{class_name} : {confidence:.2f}"
 
+                    cv_image = cv2.putText(cv_image, label, (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+
+            # Publish the modified image
             output = self.bridge.cv2_to_imgmsg(cv_image, "bgr8")
             self.img_pub.publish(output)
-
 
 def main():
     rclpy.init()
