@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+
 import cv2
 import numpy as np
 

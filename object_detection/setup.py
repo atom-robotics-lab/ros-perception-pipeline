@@ -1,7 +1,8 @@
 import os
 
-from setuptools import setup
 from glob import glob
+
+from setuptools import setup
 
 package_name = 'object_detection'
 

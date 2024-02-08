@@ -12,17 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ultralytics import YOLO
 import os
 
+from ultralytics import YOLO
 from ..DetectorBase import DetectorBase
 
 
 class YOLOv8(DetectorBase):
+
     def __init__(self, conf_threshold=0.7):
-
         super().__init__()
-
         self.conf_threshold = conf_threshold
 
     def build_model(self, model_dir_path, weight_file_name):

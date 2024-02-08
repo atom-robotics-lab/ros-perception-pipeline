@@ -19,10 +19,10 @@ import os
 
 import cv2
 
+from cv_bridge import CvBridge
+
 import rclpy
 from rclpy.node import Node
-
-from cv_bridge import CvBridge
 
 from sensor_msgs.msg import Image
 

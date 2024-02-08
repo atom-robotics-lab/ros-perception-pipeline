@@ -22,8 +22,8 @@ from ..DetectorBase import DetectorBase
 
 
 class RetinaNet(DetectorBase):
-    def __init(self):
 
+    def __init(self):
         super.__init__()
 
     def build_model(self, model_dir_path, weight_file_name):
