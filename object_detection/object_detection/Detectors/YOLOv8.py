@@ -15,6 +15,7 @@
 import os
 
 from ultralytics import YOLO
+
 from ..DetectorBase import DetectorBase
 
 

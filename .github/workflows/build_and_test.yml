@@ -30,7 +30,7 @@ jobs:
           distribution: humble
           linter: flake8
           package-name: "*"
-          arguments: '--config=${{ github.workspace }}/object_detection/setup.cfg'
+          arguments: '--config=${{ github.workspace }}/.flake8'
       - name: Ament PEP257 Lint
         uses: ros-tooling/action-ros-lint@master
         with:

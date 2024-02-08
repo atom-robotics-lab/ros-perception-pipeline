@@ -21,7 +21,7 @@ import pytest
 @pytest.mark.flake8
 @pytest.mark.linter
 def test_flake8():
-    config_file = join(dirname(dirname(abspath(__file__))), "setup.cfg")
+    config_file = join(dirname(dirname(dirname(abspath(__file__)))), ".flake8")
     args = [
         "--config={}".format(config_file)
     ]
