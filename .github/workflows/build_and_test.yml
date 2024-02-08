@@ -26,7 +26,6 @@ jobs:
         uses: ros-tooling/action-ros-lint@master
         with:
           linter: ${{ matrix.linter }}
-          arguments: '--extend-ignore=Q000,--max-line-length=125'
           package-name: "*"
   build_source:
     name: Build Docker Image and ROS 2 Packages
