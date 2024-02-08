@@ -18,27 +18,29 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup ROS
         uses: ros-tooling/setup-ros@master
-        with:
-          required-ros-distributions: humble
       - name: Ament Copyright Lint
         uses: ros-tooling/action-ros-lint@master
         with:
+          distribution: humble
           linter: copyright
           package-name: "*"
       - name: Ament Flake8 Lint
         uses: ros-tooling/action-ros-lint@master
         with:
+          distribution: humble
           linter: flake8
           package-name: "*"
           arguments: '--config=${{ github.workspace }}/object_detection/setup.cfg'
       - name: Ament PEP257 Lint
         uses: ros-tooling/action-ros-lint@master
         with:
+          distribution: humble
           linter: pep257
           package-name: "*"
       - name: Ament xmllint Lint
         uses: ros-tooling/action-ros-lint@master
         with:
+          distribution: humble
           linter: xmllint
           package-name: "*"
 
