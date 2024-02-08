@@ -28,7 +28,7 @@ jobs:
         with:
           linter: flake8
           package-name: "*"
-          arguments: '--config=${{ github.repositor }}/object_detection/setup.cfg'
+          arguments: '--config=${{ github.repository }}/object_detection/setup.cfg'
       - name: Ament PEP257 Lint
         uses: ros-tooling/action-ros-lint@master
         with:
