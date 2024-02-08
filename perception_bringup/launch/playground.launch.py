@@ -1,10 +1,10 @@
-# Copyright (c) 2018 Intel Corporation
+# Copyright (c) 2023 A.T.O.M ROBOTICS
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#   http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,55 +19,47 @@ from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
 
 def generate_launch_description():
+    pkg_perception_bringup = get_package_share_directory("perception_bringup")
+    pkg_ros_gz_sim = get_package_share_directory("ros_gz_sim")
+    ros_gz_bridge_config = os.path.join(pkg_perception_bringup, "config", "bridge.yaml")
+    world_name = "playground"
 
-  pkg_perception_bringup = get_package_share_directory("perception_bringup")
-  #pkg_ros_gz_sim = get_package_share_directory("ros_gz_sim")
+    for arg in sys.argv:
+        if arg.startswith("world:="):
+            world_name = arg.split(":=")[1]
 
-  world_name = "playground"
+    world_sdf = pkg_perception_bringup + "/worlds/" + world_name + ".sdf"
 
-  for arg in sys.argv:
-      if arg.startswith("world:="):
-        world_name = arg.split(":=")[1]
+    gz_sim = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_ros_gz_sim, "launch", "gz_sim.launch.py")
+        ),
+        launch_arguments={
+            "gz_args": world_sdf
+        }.items()
+    )
 
-  world_sdf = pkg_perception_bringup + "/worlds/" + world_name + ".sdf"
+    parameter_bridge = Node(package="ros_gz_bridge", executable="parameter_bridge",
+                            parameters=[
+                                {'config_file': ros_gz_bridge_config}
+                            ])
 
-  '''gz_sim = IncludeLaunchDescription( 
-		PythonLaunchDescriptionSource(
-		    os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
-	)'''
+    arg_gz_sim = DeclareLaunchArgument('gz_args', default_value=world_sdf)
+    arg_world_name = DeclareLaunchArgument('world', default_value='playground_world')
 
-  gz_sim_share = get_package_share_directory("ros_gz_sim")
-  gz_sim = IncludeLaunchDescription(
-      PythonLaunchDescriptionSource(os.path.join(gz_sim_share, "launch", "gz_sim.launch.py")),
-      launch_arguments={
-          "gz_args" : world_sdf
-      }.items()
-  )
+    launch = [
+        gz_sim,
+        parameter_bridge
+    ]
 
-  parameter_bridge = Node(package="ros_gz_bridge", executable="parameter_bridge", 
-                          parameters = [
-                             {'config_file'  : os.path.join(pkg_perception_bringup, "config", "bridge.yaml")}
-                          ]
-                      )
+    args = [
+        arg_gz_sim,
+        arg_world_name
+    ]
 
-  arg_gz_sim = DeclareLaunchArgument('gz_args', default_value=world_sdf)
-
-  arg_world_name = DeclareLaunchArgument('world', default_value='playground_world' )
-
-  launch = [
-    gz_sim,
-    parameter_bridge
-  ]
-
-  args = [
-    arg_gz_sim,
-    arg_world_name
-  ]
-
-  return LaunchDescription(args + launch)
+    return LaunchDescription(args + launch)
