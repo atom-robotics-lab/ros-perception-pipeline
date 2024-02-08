@@ -13,20 +13,33 @@ jobs:
   ament_lint:
     name: Lint and Codecheck
     runs-on:  ubuntu-latest
-    strategy:
-      fail-fast:  false
-      matrix:
-        linter: [copyright, flake8, pep257, xmllint]
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
       - name: Setup ROS
         uses: ros-tooling/setup-ros@master
-      - name: ROS Lint Action
+      - name: Ament Copyright Lint
         uses: ros-tooling/action-ros-lint@master
         with:
-          linter: ${{ matrix.linter }}
+          linter: copyright
           package-name: "*"
+      - name: Ament Flake8 Lint
+        uses: ros-tooling/action-ros-lint@master
+        with:
+          linter: flake8
+          package-name: "*"
+          arguments: '--config=${{ github.repositor }}/object_detection/setup.cfg'
+      - name: Ament PEP257 Lint
+        uses: ros-tooling/action-ros-lint@master
+        with:
+          linter: pep257
+          package-name: "*"
+      - name: Ament xmllint Lint
+        uses: ros-tooling/action-ros-lint@master
+        with:
+          linter: xmllint
+          package-name: "*"
+
   build_source:
     name: Build Docker Image and ROS 2 Packages
     runs-on: ubuntu-latest
