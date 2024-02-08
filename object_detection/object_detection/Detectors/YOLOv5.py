@@ -1,4 +1,19 @@
+# Copyright (c) 2023 A.T.O.M ROBOTICS
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
+
 import cv2
 import numpy as np
 
@@ -6,7 +21,9 @@ from ..DetectorBase import DetectorBase
 
 
 class YOLOv5(DetectorBase):
-    def __init__(self, conf_threshold = 0.7, score_threshold = 0.4, nms_threshold = 0.25, is_cuda = 1):
+    def __init__(self, conf_threshold=0.7,
+                 score_threshold=0.4, nms_threshold=0.25,
+                 is_cuda=1):
 
         super().__init__()
 
@@ -17,17 +34,19 @@ class YOLOv5(DetectorBase):
         self.INPUT_HEIGHT = 640
         self.CONFIDENCE_THRESHOLD = conf_threshold
 
-        self.is_cuda = is_cuda   
+        self.is_cuda = is_cuda
 
-    
-    # load model and prepare its backend to either run on GPU or CPU, see if it can be added in constructor
+    # load model and prepare its backend to either run on GPU or CPU,
+    # see if it can be added in constructor
     def build_model(self, model_dir_path, weight_file_name):
         model_path = os.path.join(model_dir_path, weight_file_name)
 
         try:
             self.net = cv2.dnn.readNet(model_path)
-        except:
-            raise Exception("Error loading given model from path: {}. Maybe the file doesn't exist?".format(model_path))
+        except Exception as e:
+            print("Loading the model failed with exception {}".format(e))
+            raise Exception("Error loading given model from path: {}.".format(model_path) +
+                            "Maybe the file doesn't exist?")
 
         if self.is_cuda:
             print("is_cuda was set to True. Attempting to use CUDA")
@@ -38,23 +57,22 @@ class YOLOv5(DetectorBase):
             self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
             self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 
-
     # load classes.txt that contains mapping of model with labels
-    # TODO: add try/except to raise exception that tells the use to check the name if it is classes.txt
+    # TODO: add try/except to raise exception that tells the use to
+    # check the name if it is classes.txt
     def load_classes(self, model_dir_path):
         self.class_list = []
         with open(model_dir_path + "/classes.txt", "r") as f:
             self.class_list = [cname.strip() for cname in f.readlines()]
         return self.class_list
 
-    
     def detect(self, image):
-        # convert image to 640x640 
-        blob = cv2.dnn.blobFromImage(image, 1/255.0, (self.INPUT_WIDTH, self.INPUT_HEIGHT), swapRB=True, crop=False)
+        # convert image to 640x640
+        blob = cv2.dnn.blobFromImage(image, 1/255.0, (self.INPUT_WIDTH, self.INPUT_HEIGHT),
+                                     swapRB=True, crop=False)
         self.net.setInput(blob)
         preds = self.net.forward()
         return preds
-
 
     # extract bounding box, class IDs and confidences of detected objects
     # YOLOv5 returns a 3D tensor of dimension 25200*(5 + n_classes)
@@ -68,7 +86,7 @@ class YOLOv5(DetectorBase):
         image_width, image_height, _ = input_image.shape
 
         x_factor = image_width / self.INPUT_WIDTH
-        y_factor =  image_height / self.INPUT_HEIGHT
+        y_factor = image_height / self.INPUT_HEIGHT
 
         # Iterate through all the 25200 vectors
         for r in range(rows):
@@ -77,7 +95,7 @@ class YOLOv5(DetectorBase):
             # Continue only if Pc > conf_threshold
             confidence = row[4]
             if confidence >= self.CONFIDENCE_THRESHOLD:
-                
+
                 # One-hot encoded vector representing class of object
                 classes_scores = row[5:]
 
@@ -95,7 +113,7 @@ class YOLOv5(DetectorBase):
 
                     class_ids.append(class_id)
 
-                    x, y, w, h = row[0].item(), row[1].item(), row[2].item(), row[3].item() 
+                    x, y, w, h = row[0].item(), row[1].item(), row[2].item(), row[3].item()
                     left = int((x - 0.5 * w) * x_factor)
                     top = int((y - 0.5 * h) * y_factor)
                     width = int(w * x_factor)
@@ -104,7 +122,7 @@ class YOLOv5(DetectorBase):
                     boxes.append(box)
 
         # removing intersecting bounding boxes
-        indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.25, 0.45) 
+        indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.25, 0.45)
 
         result_class_ids = []
         result_confidences = []
@@ -117,7 +135,6 @@ class YOLOv5(DetectorBase):
 
         return result_class_ids, result_confidences, result_boxes
 
-
     # makes image square with dimension max(h, w)
     def format_yolov5(self):
         row, col, _ = self.frame.shape
@@ -126,14 +143,13 @@ class YOLOv5(DetectorBase):
         result[0:row, 0:col] = self.frame
         return result
 
-
     def get_predictions(self, cv_image):
-        #Clear list
+        # Clear list
         self.predictions = []
 
         if cv_image is None:
             # TODO: show warning message (different color, maybe)
-            return None,None
+            return None, None
         else:
             self.frame = cv_image
 
@@ -143,6 +159,6 @@ class YOLOv5(DetectorBase):
             outs = self.detect(inputImage)
             class_ids, confidences, boxes = self.wrap_detection(inputImage, outs[0])
 
-            super().create_predictions_list(class_ids, confidences, boxes)  
-            
+            super().create_predictions_list(class_ids, confidences, boxes)
+
             return self.predictions
