@@ -18,6 +18,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup ROS
         uses: ros-tooling/setup-ros@master
+        with:
+          required-ros-distributions: humble
       - name: Ament Copyright Lint
         uses: ros-tooling/action-ros-lint@master
         with:
