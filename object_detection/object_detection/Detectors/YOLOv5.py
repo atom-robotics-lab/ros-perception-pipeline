@@ -12,30 +12,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import torch
 import os
+
+import torch
 
 from ..DetectorBase import DetectorBase
 
 
 class YOLOv5(DetectorBase):
-    def __init__(self, conf_threshold = 0.7):
 
+    def __init__(self, conf_threshold=0.7):
         super().__init__()
-
         self.conf_threshold = conf_threshold
 
     def build_model(self, model_dir_path, weight_file_name):
-
-        try : 
+        try: 
             model_path = os.path.join(model_dir_path, weight_file_name)
-            self.model = torch.hub.load('ultralytics/yolov5:v6.0', 'custom', path = model_path, force_reload = True)
-
-        except :
-            raise Exception("Error loading given model from path: {}. Maybe the file doesn't exist?".format(model_path))
+            self.model = torch.hub.load('ultralytics/yolov5:v6.0', 'custom', path=model_path, 
+                                        force_reload=True)
+        except:
+            raise Exception("Error loading given model from path: {}.".format(model_path) +
+                            " Maybe the file doesn't exist?")
         
     def load_classes(self, model_dir_path):
-
         self.class_list = []
 
         with open(os.path.join(model_dir_path, 'classes.txt')) as f :
@@ -44,12 +43,10 @@ class YOLOv5(DetectorBase):
         return self.class_list
     
     def get_predictions(self, cv_image):
-
-        if cv_image is None :
+        if cv_image is None:
             # TODO: show warning message (different color, maybe)
             return None, None
-        
-        else :
+        else:
             self.frame = cv_image
             class_id = []
             confidence = []
@@ -57,8 +54,8 @@ class YOLOv5(DetectorBase):
 
             results = self.model(self.frame)
             
-            for *xyxy, conf, id in results.xyxy[0]:
-                class_id.append(int(id))
+            for *xyxy, conf, label in results.xyxy[0]:
+                class_id.append(int(label))
                 confidence.append(conf.item())
                 boxes.append([int(xy) for xy in xyxy])
 
