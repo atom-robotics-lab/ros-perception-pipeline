@@ -26,22 +26,23 @@ class YOLOv5(DetectorBase):
         self.conf_threshold = conf_threshold
 
     def build_model(self, model_dir_path, weight_file_name):
-        try: 
+        try:
             model_path = os.path.join(model_dir_path, weight_file_name)
-            self.model = torch.hub.load('ultralytics/yolov5:v6.0', 'custom', path=model_path, 
+            self.model = torch.hub.load('ultralytics/yolov5:v6.0', 'custom', path=model_path,
                                         force_reload=True)
-        except:
+        except Exception as e:
+            print("Loading model failed with exception: {}".format(e))
             raise Exception("Error loading given model from path: {}.".format(model_path) +
                             " Maybe the file doesn't exist?")
-        
+
     def load_classes(self, model_dir_path):
         self.class_list = []
 
-        with open(os.path.join(model_dir_path, 'classes.txt')) as f :
+        with open(os.path.join(model_dir_path, 'classes.txt')) as f:
             self.class_list = [cname.strip() for cname in f.readlines()]
 
         return self.class_list
-    
+
     def get_predictions(self, cv_image):
         if cv_image is None:
             # TODO: show warning message (different color, maybe)
@@ -53,7 +54,7 @@ class YOLOv5(DetectorBase):
             boxes = []
 
             results = self.model(self.frame)
-            
+
             for *xyxy, conf, label in results.xyxy[0]:
                 class_id.append(int(label))
                 confidence.append(conf.item())
