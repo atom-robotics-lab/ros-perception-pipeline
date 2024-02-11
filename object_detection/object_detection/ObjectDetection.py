@@ -16,6 +16,7 @@
 
 import importlib
 import os
+import time
 
 import cv2
 
@@ -77,6 +78,12 @@ class ObjectDetection(Node):
 
         self.bridge = CvBridge()
 
+        if self.show_fps:
+            self.start_time = time.time()
+            self.frame_count = 0
+            self.total_elapsed_time = 0
+            self.average_fps = 0
+
     def discover_detectors(self):
         curr_dir = os.path.dirname(__file__)
         dir_contents = os.listdir(curr_dir + "/Detectors")
@@ -101,6 +108,8 @@ class ObjectDetection(Node):
     def detection_cb(self, img_msg):
         cv_image = self.bridge.imgmsg_to_cv2(img_msg, "bgr8")
 
+        start_time = time.time()
+
         predictions = self.detector.get_predictions(cv_image=cv_image)
 
         if predictions is None:
@@ -119,6 +128,22 @@ class ObjectDetection(Node):
 
                 cv_image = cv2.putText(cv_image, label, (x1, y1 - 5),
                                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+
+            if self.show_fps:
+                elapsed_time = time.time() - start_time
+                self.frame_count += 1
+                self.total_elapsed_time += elapsed_time
+
+                # Write FPS on the frame
+                cv_image = cv2.putText(cv_image, f"FPS: {self.average_fps:.2f}", (10, 30),
+                                       cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+
+                if time.time() - self.start_time >= 1.0:
+                    self.average_fps = self.frame_count / self.total_elapsed_time
+
+                    self.frame_count = 0
+                    self.total_elapsed_time = 0
+                    self.start_time = time.time()
 
             output = self.bridge.cv2_to_imgmsg(cv_image, "bgr8")
             self.img_pub.publish(output)
