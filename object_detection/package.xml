@@ -3,7 +3,7 @@
 <package format="3">
   <name>object_detection</name>
   <version>0.0.0</version>
-  <description>This is a ROS 2 package aimed at providing an interfacing between Deep Learning models and the ROS architecture using a plug-and-play modular arhitecture</description>
+  <description>This is a ROS 2 package aimed at providing an interfacing between Deep Learning models and the ROS architecture using a plug-and-play modular architecture</description>
   <maintainer email="jasmeet0915@gmail.com">singh</maintainer>
   <license>Apache 2.0</license>
 
