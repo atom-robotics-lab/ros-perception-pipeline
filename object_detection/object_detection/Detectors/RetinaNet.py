@@ -21,7 +21,7 @@ import numpy as np
 from ..DetectorBase import DetectorBase
 
 
-class RetinaNet(DetectorBase) :
+class RetinaNet(DetectorBase):
 
     def __init__(self):
         super.__init__()
