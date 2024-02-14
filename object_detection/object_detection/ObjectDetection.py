@@ -111,7 +111,7 @@ class ObjectDetection(Node):
 
                 # Check if the confidence is above the threshold
                 if confidence >= self.confidence_threshold:
-                    x1, y1, x2, y2 = map(int, prediction['box'])                
+                    x1, y1, x2, y2 = map(int, prediction['box'])
 
                     # Draw the bounding box
                     cv_image = cv2.rectangle(cv_image, (x1, y1), (x2, y2), (0, 255, 0), 1)
@@ -126,6 +126,7 @@ class ObjectDetection(Node):
             # Publish the modified image
             output = self.bridge.cv2_to_imgmsg(cv_image, "bgr8")
             self.img_pub.publish(output)
+
 
 def main():
     rclpy.init()
