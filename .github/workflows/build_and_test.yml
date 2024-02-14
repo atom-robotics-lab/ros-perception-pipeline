@@ -1,0 +1,65 @@
+name: Build and Test Workflows
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+
+jobs:
+  ament_lint:
+    name: Lint and Codecheck
+    runs-on:  ubuntu-latest
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+      - name: Setup ROS
+        uses: ros-tooling/setup-ros@master
+      - name: Ament Copyright Lint
+        uses: ros-tooling/action-ros-lint@master
+        with:
+          distribution: humble
+          linter: copyright
+          package-name: "*"
+      - name: Ament Flake8 Lint
+        uses: ros-tooling/action-ros-lint@master
+        with:
+          distribution: humble
+          linter: flake8
+          package-name: "*"
+          arguments: '--config=${{ github.workspace }}/.flake8'
+      - name: Ament PEP257 Lint
+        uses: ros-tooling/action-ros-lint@master
+        with:
+          distribution: humble
+          linter: pep257
+          package-name: "*"
+      - name: Ament xmllint Lint
+        uses: ros-tooling/action-ros-lint@master
+        with:
+          distribution: humble
+          linter: xmllint
+          package-name: "*"
+
+  build_source:
+    name: Build Docker Image and ROS 2 Packages
+    runs-on: ubuntu-latest
+    env:
+      CONTAINER_NAME: perception_pipeline
+      PERCEP_WS:  /root/percep_ws
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+      - name: Build Docker Image
+        run:  docker build . --file Dockerfile.ubuntu -t ${{ github.repository }}:latest
+      - name: Run Docker Image
+        run:  |
+          docker run -it -d --name $CONTAINER_NAME \
+          -v ${{ github.workspace }}:$PERCEP_WS/src \
+          ${{ github.repository }}:latest
+      - name: Build ROS 2 Packages in Container
+        run:  docker exec $CONTAINER_NAME bash -c \
+              "source /opt/ros/humble/setup.bash && cd $PERCEP_WS && colcon build"

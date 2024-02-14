@@ -1,6 +1,7 @@
-from setuptools import setup
-import os
 from glob import glob
+import os
+
+from setuptools import setup
 
 package_name = 'object_detection'
 
@@ -20,8 +21,8 @@ setup(
     zip_safe=True,
     maintainer='singh',
     maintainer_email='jasmeet0915@gmail.com',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    description='Plug-and-Play ROS 2 package for Perception in Robotics',
+    license='Apache 2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
