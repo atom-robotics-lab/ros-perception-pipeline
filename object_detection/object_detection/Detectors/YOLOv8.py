@@ -21,7 +21,7 @@ from ..DetectorBase import DetectorBase
 
 class YOLOv8(DetectorBase):
     def __init__(self):
-    
+
         super().__init__()
 
     def build_model(self, model_dir_path, weight_file_name):
@@ -52,9 +52,9 @@ class YOLOv8(DetectorBase):
             boxes = []
 
             # Perform object detection on image
-            result = self.model.predict(self.frame, verbose = False) # Perform object detection on image
+            result = self.model.predict(self.frame, verbose=False)  # Perform object detection on image
             row = result[0].boxes.cpu()
-            
+
             for box in row:
                 class_id.append(box.cls.numpy().tolist()[0])
                 confidence.append(box.conf.numpy().tolist()[0])
