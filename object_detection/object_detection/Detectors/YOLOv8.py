@@ -13,7 +13,9 @@
 # limitations under the License.
 
 import os
+
 from ultralytics import YOLO
+
 from ..DetectorBase import DetectorBase
 
 
