@@ -18,7 +18,7 @@ from ..DetectorBase import DetectorBase
 
 
 class YOLOv8(DetectorBase):
-    
+
     def __init__(self):
 
         super().__init__()
