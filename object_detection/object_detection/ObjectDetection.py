@@ -25,6 +25,8 @@ import rclpy
 from rclpy.node import Node
 
 from sensor_msgs.msg import Image
+from geometry_msgs.msg import Pose
+from vision_msgs.msg import BoundingBox2D, BoundingBox2DArray
 
 
 class ObjectDetection(Node):
@@ -72,7 +74,7 @@ class ObjectDetection(Node):
             self.load_detector()
 
         self.img_pub = self.create_publisher(Image, self.output_img_topic, 10)
-        self.bb_pub = None
+        self.bb_pub = self.create_publisher(BoundingBox2DArray, self.output_bb_topic, 10)
         self.img_sub = self.create_subscription(Image, self.input_img_topic, self.detection_cb, 10)
 
         self.bridge = CvBridge()
@@ -103,6 +105,9 @@ class ObjectDetection(Node):
 
         predictions = self.detector.get_predictions(cv_image=cv_image)
 
+        bb_array_msg = BoundingBox2DArray()
+        bb_array_msg_boxes = []
+
         if predictions is None:
             print("Image input from topic: {} is empty".format(self.input_img_topic))
         else:
@@ -119,6 +124,21 @@ class ObjectDetection(Node):
 
                 cv_image = cv2.putText(cv_image, label, (x1, y1 - 5),
                                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+                
+                bb_msg = BoundingBox2D()
+                
+                bb_msg_center = Pose()
+                bb_msg_center.x = (x2 - x1)/2 + x1
+                bb_msg_center.y = (y1 - y2)/2 + y1
+
+                bb_msg.center = bb_msg_center
+                bb_msg.size_x = x2 - x1
+                bb_msg.size_y = y1 - y2
+
+                bb_array_msg_boxes.append(bb_msg)
+
+            bb_array_msg.boxes = bb_array_msg_boxes
+            self.bb_pub.publish(bb_array_msg)
 
             output = self.bridge.cv2_to_imgmsg(cv_image, "bgr8")
             self.img_pub.publish(output)

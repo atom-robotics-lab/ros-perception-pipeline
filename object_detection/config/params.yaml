@@ -6,7 +6,7 @@ object_detection:
     publish_output_img: 1
     model_params:
       detector_type: YOLOv5
-      model_dir_path: /root/percep_ws/models/yolov5
-      weight_file_name: yolov5.onnx
+      model_dir_path: /home/mediapipe/Desktop/ros_workspaces/percep_ws/models/yolov5
+      weight_file_name: yolov5s.pt
       confidence_threshold : 0.5
       show_fps : 1
