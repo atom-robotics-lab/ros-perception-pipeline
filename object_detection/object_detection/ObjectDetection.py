@@ -25,8 +25,7 @@ import rclpy
 from rclpy.node import Node
 
 from sensor_msgs.msg import Image
-from geometry_msgs.msg import Pose
-from vision_msgs.msg import BoundingBox2D, BoundingBox2DArray
+from vision_msgs.msg import Detection2D, Detection2DArray, ObjectHypothesis, ObjectHypothesisWithPose, Point2D, Pose2D
 
 
 class ObjectDetection(Node):
@@ -74,7 +73,7 @@ class ObjectDetection(Node):
             self.load_detector()
 
         self.img_pub = self.create_publisher(Image, self.output_img_topic, 10)
-        self.bb_pub = self.create_publisher(BoundingBox2DArray, self.output_bb_topic, 10)
+        self.bb_pub = self.create_publisher(Detection2DArray, self.output_bb_topic, 10)
         self.img_sub = self.create_subscription(Image, self.input_img_topic, self.detection_cb, 10)
 
         self.bridge = CvBridge()
@@ -105,8 +104,8 @@ class ObjectDetection(Node):
 
         predictions = self.detector.get_predictions(cv_image=cv_image)
 
-        bb_array_msg = BoundingBox2DArray()
-        bb_array_msg_boxes = []
+        # Forming Detection2DArray message
+        detection_array_msg = Detection2DArray()
 
         if predictions is None:
             print("Image input from topic: {} is empty".format(self.input_img_topic))
@@ -124,21 +123,30 @@ class ObjectDetection(Node):
 
                 cv_image = cv2.putText(cv_image, label, (x1, y1 - 5),
                                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
-                
-                bb_msg = BoundingBox2D()
-                
-                bb_msg_center = Pose()
-                bb_msg_center.x = (x2 - x1)/2 + x1
-                bb_msg_center.y = (y1 - y2)/2 + y1
 
-                bb_msg.center = bb_msg_center
-                bb_msg.size_x = x2 - x1
-                bb_msg.size_y = y1 - y2
+                detection_msg = Detection2D()
+                detection_msg.bbox.size_x = float(x2-x1)
+                detection_msg.bbox.size_y = float(y1-y2)
 
-                bb_array_msg_boxes.append(bb_msg)
+                position_msg = Point2D()
+                position_msg.x = float((x2-x1)/2 + x1)
+                position_msg.y = float((y1-y2)/2 + y2)
 
-            bb_array_msg.boxes = bb_array_msg_boxes
-            self.bb_pub.publish(bb_array_msg)
+                center_msg = Pose2D()
+                center_msg.position = position_msg
+                detection_msg.bbox.center = center_msg
+
+                results_msg = ObjectHypothesisWithPose()
+                hypothesis_msg = ObjectHypothesis()
+                hypothesis_msg.class_id = str(class_id)
+                hypothesis_msg.score = prediction['confidence']
+
+                results_msg.hypothesis = hypothesis_msg
+                detection_msg.results.append(results_msg)
+
+                detection_array_msg.detections.append(detection_msg)
+
+            self.bb_pub.publish(detection_array_msg)
 
             output = self.bridge.cv2_to_imgmsg(cv_image, "bgr8")
             self.img_pub.publish(output)
