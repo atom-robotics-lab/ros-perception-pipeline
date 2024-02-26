@@ -19,7 +19,8 @@ import numpy as np
 
 class DetectorBase(ABC):
 
-    def __init__(self) -> None:
+    def __init__(self, logger) -> None:
+        self.logger = logger
         self.predictions = []
 
     def create_predictions_list(self, class_ids, confidences, boxes):

@@ -35,9 +35,6 @@ class ObjectDetection(Node):
         # create an empty list that will hold the names of all available detector
         self.available_detectors = []
 
-        # fill available_detectors with the detectors from Detectors dir
-        self.discover_detectors()
-
         self.declare_parameters(
             namespace='',
             parameters=[
@@ -64,12 +61,13 @@ class ObjectDetection(Node):
         self.confidence_threshold = self.get_parameter('model_params.confidence_threshold').value
         self.show_fps = self.get_parameter('model_params.show_fps').value
 
-        # raise an exception if specified detector was not found
-        if self.detector_type not in self.available_detectors:
-            raise ModuleNotFoundError(self.detector_type + " Detector specified in config was not found. " +
-                                      "Check the Detectors dir for available detectors.")
-        else:
-            self.load_detector()
+        # Fill available_detectors with the detectors from Detectors directory
+        self.discover_detectors()
+        # Load the detector specified through the parameters
+        self.load_detector()
+
+        # Create a logger instance
+        self.logger  = self.get_logger()
 
         self.img_pub = self.create_publisher(Image, self.output_img_topic, 10)
         self.bb_pub = None
@@ -88,15 +86,22 @@ class ObjectDetection(Node):
         self.available_detectors.remove('__init__')
 
     def load_detector(self):
-        detector_mod = importlib.import_module(".Detectors." + self.detector_type,
-                                               "object_detection")
-        detector_class = getattr(detector_mod, self.detector_type)
-        self.detector = detector_class()
+        # Raise an exception if specified detector was not found
+        if self.detector_type not in self.available_detectors:
+            self.logger.error("{} Detector was set in parameters but was not found. Check the " +
+                              "Detectors directory for list of available detectors".format(self.detector_type))
+            raise ModuleNotFoundError(self.detector_type + " Detector specified in config was not found. " +
+                                      "Check the Detectors dir for available detectors.")
+        else:
+            detector_mod = importlib.import_module(".Detectors." + self.detector_type,
+                                                   "object_detection")
+            detector_class = getattr(detector_mod, self.detector_type)
+            self.detector = detector_class(self.logger)
 
-        self.detector.build_model(self.model_dir_path, self.weight_file_name)
-        self.detector.load_classes(self.model_dir_path)
+            self.detector.build_model(self.model_dir_path, self.weight_file_name)
+            self.detector.load_classes(self.model_dir_path)
 
-        print("Your detector: {} has been loaded !".format(self.detector_type))
+            self.logger.info("Your detector: {} has been loaded!".format(self.detector_type))
 
     def detection_cb(self, img_msg):
         cv_image = self.bridge.imgmsg_to_cv2(img_msg, "bgr8")
@@ -104,7 +109,7 @@ class ObjectDetection(Node):
         predictions = self.detector.get_predictions(cv_image=cv_image)
 
         if predictions is None:
-            print("Image input from topic: {} is empty".format(self.input_img_topic))
+            self.logger.warning("Image input from topic: {} is empty".format(self.input_img_topic), throttle_duration_sec=1)
         else:
             for prediction in predictions:
                 confidence = prediction['confidence']
