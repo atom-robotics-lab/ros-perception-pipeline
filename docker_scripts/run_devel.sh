@@ -66,6 +66,7 @@ docker run --gpus all --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 
 -v $PERCEP_WS_PATH/src/:/root/percep_ws/src \
 -v $PERCEP_WS_PATH/models/:/root/percep_ws/models/ \
 -v ddsconfig.xml:/ddsconfig.xml \
+--env ROS_LOG_DIR=$PERCEP_WS_PATH/logs \
 --env CYCLONEDDS_URI=/ddsconfig.xml \
 --env="QT_X11_NO_MITSHM=1"  \
 --env="DISPLAY"  \
