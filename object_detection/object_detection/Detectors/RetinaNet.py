@@ -23,30 +23,43 @@ from ..DetectorBase import DetectorBase
 
 class RetinaNet(DetectorBase):
 
-    def __init__(self):
-        super.__init__()
+    def __init__(self, logger):
+        super().__init__(logger)
+
+        # Create a logger instance
+        self.logger = super().get_logger()
 
     def build_model(self, model_dir_path, weight_file_name):
         model_path = os.path.join(model_dir_path, weight_file_name)
 
         try:
             self.model = models.load_model(model_path, backbone_name='resnet50')
+            self.logger.info("[RetinaNet] Model successfully loaded from: {}".format(model_path))
         except Exception as e:
-            print("Loading the model failed with exception {}".format(e))
+            self.logger.error("[RetinaNet] Loading model failed with exception: {}".format(e))
             raise Exception("Error loading given model from path: {}.".format(model_path) +
-                            "Maybe the file doesn't exist?")
+                            " Maybe the file doesn't exist?")
 
     def load_classes(self, model_dir_path):
         self.class_list = []
+        fpath = os.path.join(model_dir_path, 'classes.txt')
 
-        with open(model_dir_path + "/classes.txt", "r") as f:
-            self.class_list = [cname.strip() for cname in f.readlines()]
+        try:
+            with open(os.path.join(model_dir_path, "classes.txt"), "r") as f:
+                self.class_list = [cname.strip() for cname in f.readlines()]
+            self.logger.info("[RetinaNet] Loaded classes from {}".format(fpath))
+        except FileNotFoundError:
+            self.logger.error("[RetinaNet] Classes file not found at path: {}".format(fpath))
+            raise FileNotFoundError("Classes file not found. Make sure the file exists at the specified path.")
+        except Exception as e:
+            self.logger.error("[RetinaNet] Error loading classes with exception: {}".format(e))
+            raise Exception("Error loading classes from file: {}".format(fpath))
 
         return self.class_list
 
     def get_predictions(self, cv_image):
         if cv_image is None:
-            # TODO: show warning message (different color, maybe)
+            self.logger.warning("[RetinaNet] Input image is None. No predictions will be generated.")
             return None
         else:
             # copy to draw on
@@ -71,5 +84,6 @@ class RetinaNet(DetectorBase):
             boxes = [[int(coord/scale) for coord in box] for box in boxes]
 
             super().create_predictions_list(class_ids, confidences, boxes)
+            self.logger.debug("[RetinaNet] Object detection successfully performed on the input image.")
 
             return self.predictions

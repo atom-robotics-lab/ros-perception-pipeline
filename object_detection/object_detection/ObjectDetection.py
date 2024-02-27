@@ -36,7 +36,7 @@ class ObjectDetection(Node):
         self.available_detectors = []
 
         # Create a logger instance
-        self.logger  = super().get_logger()
+        self.logger = super().get_logger()
 
         # Declare parameters with default values
         self.declare_parameters(
@@ -86,8 +86,8 @@ class ObjectDetection(Node):
         self.show_fps = self.get_parameter('model_params.show_fps').value
 
         self.logger.info("[OBJECT DETECTION] Detector type set to {} and".format(self.detector_type) +
-                         " using weigth file from {}".format(self.model_dir_path + self.weight_file_name))
-        self.logger.info("[OBJECT DETECTION] Confidence threshold for detection set to: {}".format(self.confidence_threshold))
+                         " using weight file from {}".format(self.model_dir_path + self.weight_file_name))
+        self.logger.info("[OBJECT DETECTION] Detection confidence threshold set to: {}".format(self.confidence_threshold))
 
     def discover_detectors(self):
         curr_dir = os.path.dirname(__file__)
@@ -102,8 +102,9 @@ class ObjectDetection(Node):
     def load_detector(self):
         # Raise an exception if specified detector was not found
         if self.detector_type not in self.available_detectors:
-            self.logger.error("[OBJECT DETECTION] {} Detector was set in parameters but was not found. Check the " +
-                              "Detectors directory for list of available detectors".format(self.detector_type))
+            self.logger.error("[OBJECT DETECTION]" +
+                              " {} Detector was set in parameters but was not found".format(self.detector_type) +
+                              "Check the Detectors directory for list of available detectors")
             raise ModuleNotFoundError(self.detector_type + " Detector specified in config was not found. " +
                                       "Check the Detectors dir for available detectors.")
         else:
@@ -123,7 +124,8 @@ class ObjectDetection(Node):
         predictions = self.detector.get_predictions(cv_image=cv_image)
 
         if predictions is None:
-            self.logger.warning("[OBJECT DETECTION] Image input from topic: {} is empty".format(self.input_img_topic), throttle_duration_sec=1)
+            self.logger.warning("[OBJECT DETECTION] " +
+                                "Image input from topic: {} is empty".format(self.input_img_topic), throttle_duration_sec=1)
         else:
             for prediction in predictions:
                 confidence = prediction['confidence']
