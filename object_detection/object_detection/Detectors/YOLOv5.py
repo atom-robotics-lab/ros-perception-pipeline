@@ -21,12 +21,9 @@ from ..DetectorBase import DetectorBase
 
 class YOLOv5(DetectorBase):
 
-    def __init__(self, logger, conf_threshold=0.7):
-        super().__init__(logger)
+    def __init__(self, conf_threshold=0.7):
+        super().__init__()
         self.conf_threshold = conf_threshold
-
-        # Create a logger instance
-        self.logger = super().get_logger()
 
     def build_model(self, model_dir_path, weight_file_name):
         try:

@@ -36,7 +36,7 @@ class ObjectDetection(Node):
         self.available_detectors = []
 
         # Create a logger instance
-        self.logger = super().get_logger()
+        self.logger = self.get_logger()
 
         # Declare parameters with default values
         self.declare_parameters(
@@ -111,8 +111,12 @@ class ObjectDetection(Node):
             detector_mod = importlib.import_module(".Detectors." + self.detector_type,
                                                    "object_detection")
             detector_class = getattr(detector_mod, self.detector_type)
-            self.detector = detector_class(self.logger)
+            self.detector = detector_class()
 
+            # Set the logger for the detector plugins
+            self.detector.set_logger(self.logger)
+
+            # Load the model and the classes file for the detector plugin
             self.detector.build_model(self.model_dir_path, self.weight_file_name)
             self.detector.load_classes(self.model_dir_path)
 

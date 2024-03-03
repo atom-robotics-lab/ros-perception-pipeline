@@ -21,9 +21,9 @@ from ..DetectorBase import DetectorBase
 
 class YOLOv8(DetectorBase):
 
-    def __init__(self, logger):
+    def __init__(self):
 
-        super().__init__(logger)
+        super().__init__()
 
     def build_model(self, model_dir_path, weight_file_name):
         try:

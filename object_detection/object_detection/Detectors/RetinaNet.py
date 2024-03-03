@@ -23,11 +23,8 @@ from ..DetectorBase import DetectorBase
 
 class RetinaNet(DetectorBase):
 
-    def __init__(self, logger):
-        super().__init__(logger)
-
-        # Create a logger instance
-        self.logger = super().get_logger()
+    def __init__(self):
+        super().__init__()
 
     def build_model(self, model_dir_path, weight_file_name):
         model_path = os.path.join(model_dir_path, weight_file_name)
