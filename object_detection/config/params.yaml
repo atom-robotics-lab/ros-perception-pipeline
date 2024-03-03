@@ -1,12 +1,11 @@
 object_detection:
   ros__parameters:
-    input_img_topic: /kitti/camera/color/left/image_raw
+    input_img_topic: color/image_raw
     output_bb_topic: object_detection/img_bb
     output_img_topic: object_detection/img
-    publish_output_img: 1
     model_params:
       detector_type: YOLOv5
       model_dir_path: /root/percep_ws/models/yolov5
       weight_file_name: yolov5.onnx
-      confidence_threshold : 0.5
-      show_fps : 1
+      confidence_threshold: 0.5
+      show_fps: 1
