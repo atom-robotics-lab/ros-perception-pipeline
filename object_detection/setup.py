@@ -15,7 +15,9 @@ setup(
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
         (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
-
+        (os.path.join('share', package_name, 'test'), glob('test/*.py')),
+        (os.path.join('share', package_name, 'test/test_bag'), glob('test/test_bag/*')),
+        (os.path.join('share', package_name, 'test/test_config'), glob('test/test_config/*.yaml')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
