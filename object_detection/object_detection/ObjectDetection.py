@@ -25,7 +25,7 @@ import rclpy
 from rclpy.node import Node
 
 from sensor_msgs.msg import Image
-
+from vision_msgs.msg import Detection2D, Detection2DArray, ObjectHypothesisWithPose, Pose2D, Point2D, ObjectHypothesis
 
 class ObjectDetection(Node):
 
@@ -45,6 +45,7 @@ class ObjectDetection(Node):
                 ('input_img_topic', 'color/image_raw'),
                 ('output_bb_topic', 'object_detection/img_bb'),
                 ('output_img_topic', 'object_detection/img'),
+                ('output_vision_topic', 'object_detection/detection_info'),
                 ('model_params.detector_type', 'YOLOv5'),
                 ('model_params.model_dir_path', '/root/percep_ws/models/yolov5'),
                 ('model_params.weight_file_name', 'yolov5.onnx'),
@@ -63,6 +64,7 @@ class ObjectDetection(Node):
         self.img_pub = self.create_publisher(Image, self.output_img_topic, 10)
         self.bb_pub = None
         self.img_sub = self.create_subscription(Image, self.input_img_topic, self.detection_cb, 10)
+        self.vision_msg_pub = self.create_publisher(Detection2DArray, self.output_vision_topic, 10)
 
         self.bridge = CvBridge()
 
@@ -73,6 +75,7 @@ class ObjectDetection(Node):
         self.input_img_topic = self.get_parameter('input_img_topic').value
         self.output_bb_topic = self.get_parameter('output_bb_topic').value
         self.output_img_topic = self.get_parameter('output_img_topic').value
+        self.output_vision_topic = self.get_parameter('output_vision_topic').value
 
         self.logger.info("[OBJECT DETECTION] Input image topic set to {}".format(self.input_img_topic))
         self.logger.info("[OBJECT DETECTION] Publishig output image on topic {}".format(self.output_img_topic) +
@@ -126,6 +129,7 @@ class ObjectDetection(Node):
         cv_image = self.bridge.imgmsg_to_cv2(img_msg, "bgr8")
 
         predictions = self.detector.get_predictions(cv_image=cv_image)
+        detection_arr = Detection2DArray()
 
         if predictions is None:
             self.logger.warning("[OBJECT DETECTION] " +
@@ -137,9 +141,38 @@ class ObjectDetection(Node):
                 # Check if the confidence is above the threshold
                 if confidence >= self.confidence_threshold:
                     x1, y1, x2, y2 = map(int, prediction['box'])
+                    width = abs(x2 - x1)
+                    height = abs(y2 - y1)
+
+                    class_id = str(prediction['class_id'])
+                    conf = float(prediction['confidence'])
+
+                    detection_msg = Detection2D()
+                    detection_msg.bbox.size_x = float(width)
+                    detection_msg.bbox.size_y = float(height)
+
+                    position_msg = Point2D()
+                    position_msg.x = float(x1 + width/2)
+                    position_msg.y = float(y1 + width/2)
+
+                    center_msg = Pose2D()
+                    center_msg.position = position_msg
+
+                    detection_msg.bbox.center = center_msg
+
+                    results_msg = ObjectHypothesisWithPose()
+                    hypothesis_msg = ObjectHypothesis()
+                    hypothesis_msg.class_id = class_id
+                    hypothesis_msg.score = conf
+
+                    results_msg.hypothesis = hypothesis_msg
+                    detection_msg.results.append(results_msg)
+
+                    # Appending the detections as messages in the dection array
+                    detection_arr.detections.append(detection_msg)
 
                     # Draw the bounding box
-                    cv_image = cv2.rectangle(cv_image, (x1, y1), (x2, y2), (0, 255, 0), 1)
+                    cv_image = cv2.rectangle(cv_image, (x1, y1), (x2, y2), (0, 255, 0), 3)
 
                     # Show names of classes on the output image
                     class_id = int(prediction['class_id'])
@@ -151,6 +184,7 @@ class ObjectDetection(Node):
             # Publish the modified image
             output = self.bridge.cv2_to_imgmsg(cv_image, "bgr8")
             self.img_pub.publish(output)
+            self.vision_msg_pub.publish(detection_arr)
 
 
 def main():

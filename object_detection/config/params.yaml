@@ -3,6 +3,7 @@ object_detection:
     input_img_topic: color/image_raw
     output_bb_topic: object_detection/img_bb
     output_img_topic: object_detection/img
+    output_vision_topic: object_detection/detection_info
     model_params:
       detector_type: YOLOv5
       model_dir_path: /root/percep_ws/models/yolov5
