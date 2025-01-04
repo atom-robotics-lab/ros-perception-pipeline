@@ -87,6 +87,8 @@ Our aim is to build a one-stop solution to all the problems related to Robotics-
 for user-specific custom tasks in the blink of an eye. We are in the process of creating different components for tasks like Object Detection, Image Pre-Processing, Image Segmentation etc.
 These components can be stitched together to make a custom pipeline for any use-case, just like how we play with LEGO bricks.
 
+![](https://github.com/atom-robotics-lab/ros-perception-pipeline/blob/develop/assets/Perception%20Pipeline.gif)
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
